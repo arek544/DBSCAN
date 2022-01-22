@@ -1,9 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def display_points(X, y):
+def display_points(X, y, title=None):
     fig, ax = plt.subplots()
     ax.scatter(X[:,0], X[:,1], c=y)
+    plt.title(title)
     plt.show()
     
 def save_file(
@@ -30,8 +31,8 @@ def save_file(
         OUT_Opt-NBC_fname_D2_R10000_m5_e10_rMin.csv
     
     '''
-    file_name = f'''
-        {file_type}_{algorithm_name}_{dataset_name}_D{n_dimentions}\
-        _R{n_rows}_m{minPts}_e{epsilon}_rMin.csv
-    '''
-    df.to_csv(file_name)
+    file_name = (
+        f'./out/{file_type}_{algorithm_name}_{dataset_name}_'
+        f'D{n_dimentions}_R{n_rows}_m{minPts}_e{epsilon}_rMin.csv'
+    )
+    df.to_csv(file_name, index=False)
