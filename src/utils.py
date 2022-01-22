@@ -17,6 +17,18 @@ def save_file(
     epsilon
 ):
     '''Save the DataFrame according to the required naming convention. 
+    
+    **Names of OUT, STAT and DEBUG files**
+
+    Names of OUT, STAT and DEBUG files should be related to the performed
+    experiment. For instance, example name of the OUT file storing the 
+    results returned by optimized NBC for fname dataset with 10000 of 
+    2-dimensional points (records), where minPts = 5, Eps = 10, reference 
+    point r is constructed from minimal values in domains of all dimensions
+    could be as follows:
+
+        OUT_Opt-NBC_fname_D2_R10000_m5_e10_rMin.csv
+    
     '''
     file_name = f'''
         {file_type}_{algorithm_name}_{dataset_name}_D{n_dimentions}\
