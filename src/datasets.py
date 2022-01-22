@@ -25,3 +25,10 @@ def jain_dataset():
     X = df[["x", "y"]].values
     y = df["real_cluster"].values
     return X, y
+
+def compound_dataset():
+    header = ["x", "y", "real_cluster"]
+    df = pd.read_csv('./data/compound_dataset.txt', sep = '\t', names=header)
+    X = df[["x", "y"]].values
+    y = df["real_cluster"].values
+    return X, y

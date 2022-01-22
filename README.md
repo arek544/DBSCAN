@@ -1,20 +1,18 @@
 # DBSCAN implementation
-----------------------------------------------------------------------------------------------
-*** Datasets to be used in the experiments ***
-----------------------------------------------------------------------------------------------
+## Datasets to be used in the experiments 
 - the toy dataset used in the class to present the execution of the NBC clustering algorithm (slide 51)
 - dim512 from http://cs.joensuu.fi/sipu/datasets/
 - complex9 from https://github.com/deric/clustering-benchmark/tree/master/src/main/resources/datasets/artificial
 - cluto-t7-10k from https://github.com/deric/clustering-benchmark/tree/master/src/main/resources/datasets/artificial
 - letter from https://github.com/deric/clustering-benchmark/tree/master/src/main/resources/datasets/real-world
-----------------------------------------------------------------------------------------------
 
-----------------------------------------------------------------------------------------------
-*** Results to be returned ***
-----------------------------------------------------------------------------------------------
+
+
+## Results to be returned 
+
 The results returned by a clustering algorithm for a given dataset and parameter values should be saved in in 3 files:
 
-(1) OUT - an output file that contains the following information on a separate line for each point in the dataset:
+(1) **OUT** - an output file that contains the following information on a separate line for each point in the dataset:
 point id, x, y, ...., \# of distance/similarity calculations, point type, CId
 where:
 - point id - the position of the point in the dataset (before possible sorting),
@@ -43,7 +41,7 @@ where:
 - maxEps – Eps value calculated based on first k candidates for k+NN of the point (for TI-optimized versions)
 - minEps is the minimal value of radius Eps within which real k+NN of the point was found (for TI-optimized versions).
 
-* Names of OUT, STAT and DEBUG files *
+## Names of OUT, STAT and DEBUG files 
 Names of OUT, STAT and DEBUG files should be related to the performed experiment. For instance, example name of the OUT file storing the results returned by optimized NBC for fname dataset with 10000 of 2-dimensional points (records), where minPts = 5, Eps = 10, reference point r is constructed from minimal values in domains of all dimensions could be as follows:
 
     OUT_Opt-NBC_fname_D2_R10000_m5_e10_rMin.csv
