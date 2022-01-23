@@ -21,7 +21,7 @@ where:
 - a point type is either a core point (denoted by 1), or a border point (denoted by 0), or a noise point (denoted by -1)
 - CId is either a cluster identifier (which is a natural number) or -1 in the case of noise points.
 
-(2) STAT - a file with the following statistics:
+(2) **STAT** - a file with the following statistics:
 - name of the input file, \# of dimensions of a point, \# of points in the input file
 - values of respective parameters of the used algorithm
 - values of dimensions of a reference point (for TI- versions)
@@ -34,7 +34,7 @@ reading the input file, calculation of distances to a reference point (for TI- v
 - Silhouette coefficient (when calculating Silhouette coefficient, each noise point should be treated as a separate singleton cluster)
 - Davies Bouldin - calculated in the case of algorithms that do not discover noise points
 
-(3) DEBUG – a file that contains important information for each point in the dataset on a separate line. For example, in the case of the NBC algorithm using the Euclidean distance and TI, the following information should be returned for each point:
+(3) **DEBUG** – a file that contains important information for each point in the dataset on a separate line. For example, in the case of the NBC algorithm using the Euclidean distance and TI, the following information should be returned for each point:
 
     point id, maxEps, minEps, NDF, |R-k+NN|, |k+NN|, identifiers of k+NN
 where:
