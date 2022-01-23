@@ -1,4 +1,14 @@
 import numpy as np
+import logging
+import time 
+
+logging.basicConfig(
+    filemode = 'w+',
+    level=logging.INFO, 
+    filename='./out/dbscan_log.log', 
+    format='%(message)s'
+)
+# logging.info(calculation_Epsneighborhood_time)
 
 
 def get_neighbors(X, current_index, epsilon, similarity):
@@ -21,6 +31,7 @@ def dbscan(X, epsilon, minPts, similarity):
     minPts - minimum number of points that create cluster,
     similarity - metric of similarity or distance bewteen two points
     '''
+    timer0 = time.time() 
     # each data point can be in one of 3 stages
     NOT_VISITED = -1 # not visited point
     VISTED = 0 # non-core point
@@ -34,7 +45,10 @@ def dbscan(X, epsilon, minPts, similarity):
     number_of_calc = {} # number of distance/similarity calculations
 
     def search(current_index, cluster_id, epsilon, minPts, similarity):
+        # calculation of Eps-neighborhood for current_index
+        timer1 = time.time() 
         neighbor_indices = get_neighbors(X, current_index, epsilon, similarity)
+        logging.info(f'Eps,{current_index}, {time.time() - timer1}')
         number_of_calc[current_index] = len(neighbor_indices)
         if len(neighbor_indices) >= minPts:
             state[current_index] = CLUSTERED
@@ -51,5 +65,6 @@ def dbscan(X, epsilon, minPts, similarity):
         not_visited_ids = np.where(state==NOT_VISITED)[0]
         search(not_visited_ids[0], cluster_id, epsilon, minPts, similarity)
         cluster_id += 1
+    logging.info(f'cluster,, {time.time() - timer0}')
     
     return cluster, state, number_of_calc
