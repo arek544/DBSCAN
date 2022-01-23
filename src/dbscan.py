@@ -1,4 +1,5 @@
 import numpy as np
+import logging
 
 
 def get_neighbors(X, current_index, epsilon, similarity):
@@ -21,6 +22,7 @@ def dbscan(X, epsilon, minPts, similarity):
     minPts - minimum number of points that create cluster,
     similarity - metric of similarity or distance bewteen two points
     '''
+    
     # each data point can be in one of 3 stages
     NOT_VISITED = -1 # not visited point
     VISTED = 0 # non-core point
@@ -51,5 +53,30 @@ def dbscan(X, epsilon, minPts, similarity):
         not_visited_ids = np.where(state==NOT_VISITED)[0]
         search(not_visited_ids[0], cluster_id, epsilon, minPts, similarity)
         cluster_id += 1
-    
+        
+    logging.info('Test')
+
     return cluster, state, number_of_calc
+
+
+class DBSCAN:
+
+    def __init__(self, epsilon, minPts, similarity):
+        self.epsilon = epsilon
+        self.minPts = minPts
+        self.distance = similarity
+        self.log_output='out.log'
+        self.name = 'dbscan'
+        
+        # Logger setup
+        logging.basicConfig(
+            level=logging.INFO, 
+            filename=self.log_output, 
+            format='%(message)s'
+        )
+    
+    def fit_transform(self, X):
+        self.X = X
+        result = dbscan(X, self.epsilon, self.minPts, self.distance)
+        self.y_pred, self.state, self.number_of_calc = result
+        return self.y_pred

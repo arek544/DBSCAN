@@ -39,3 +39,30 @@ def save_file(
         f'D{n_dimentions}_R{n_rows}_m{minPts}_e{epsilon}_rMin.csv'
     )
     df.to_csv(file_name, index=False)
+    
+    
+def get_name( 
+    algorithm_name, 
+    dataset_name, 
+    n_dimentions, 
+    n_rows, 
+    minPts='', 
+    epsilon='',
+    similarity='',
+    k=''
+):
+    name = (
+        f'{algorithm_name}_{dataset_name}'
+        f'_D{n_dimentions}_R{n_rows}'
+    )
+    if minPts:
+        name += f'_m{minPts}' 
+    if epsilon:
+        name += f'_e{epsilon}'
+    if k:
+        name += f'_k{k}'
+    if similarity:
+        name += f'_{similarity.__name__}'
+    name += '_rMin'
+    return name
+    
