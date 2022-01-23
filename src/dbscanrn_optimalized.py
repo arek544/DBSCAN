@@ -103,14 +103,14 @@ def ti_dbscanrn(X, k, similarity):
     'real': np.nan
     })
     
-    # each X point can be in one of 3 stages
-    NOT_VISITED = 0 # not visited point
-    VISTED = 1 # non-core point
-    CLUSTERED = 2 # core point
+    # each data point can be in one of 3 stages
+    NOT_VISITED = -1 # not visited point
+    VISTED = 0 # non-core point
+    CLUSTERED = 1 # core point
     
     # initial setup
     n = X.shape[0]
-    cluster = np.array([0] * n) # cluster register
+    cluster = np.array([-1] * n) # cluster register
     state = np.array([NOT_VISITED] * n) # state register
     cluster_id = 1
     point_rnn, point_knn = get_tirnn(k, df, all_point_indices) # calculate RNN_k for all points
