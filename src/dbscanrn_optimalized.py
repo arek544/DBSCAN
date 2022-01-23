@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from src.metrics import euclidean_distance
+import logging
+import time 
 
 def check_pessimistic_estimation(df, df2, current_point):
     # calculate real distance to current point
@@ -141,5 +143,28 @@ def ti_dbscanrn(X, k, similarity):
         knn = get_knn(not_clustered_ids, clustered_ids, 1, similarity, X)
         cluster[not_clustered_ids] = cluster[knn[0]]
         state[not_clustered_ids] = CLUSTERED
+    number_of_calc = 0 # to do
+    return cluster, state, number_of_calc
+
+
+class DBSCANRN_opt:
+
+    def __init__(self, k, similarity):
+        self.k = k
+        self.similarity = similarity
+        self.log_output = 'out.log'
+        self.name = 'dbscanrn_opt'
     
-    return cluster
+    def fit_transform(self, X):
+        # Logger setup
+        logging.basicConfig(
+            level=logging.INFO, 
+            filename=self.log_output, 
+            filemode='w+',
+            format='%(message)s'
+        )
+        
+        self.X = X
+        result = ti_dbscanrn(self.X, self.k, self.similarity)
+        self.y_pred, self.state, self.number_of_calc = result
+        return self.y_pred

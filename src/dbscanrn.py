@@ -1,4 +1,7 @@
 import numpy as np
+import logging
+import time 
+
 
 def get_knn(current_index, neighbor_indices, k, similarity, X):
     '''
@@ -91,5 +94,29 @@ def dbscanrn(X, k, similarity):
         knn = get_knn(not_clustered_ids, clustered_ids, 1, similarity, X)
         cluster[not_clustered_ids] = cluster[knn[0]]
         state[not_clustered_ids] = CLUSTERED
+    number_of_calc = 0 # to do
+    return cluster, state, number_of_calc
+
+
+class DBSCANRN:
+
+    def __init__(self, k, similarity):
+        self.k = k
+        self.similarity = similarity
+        self.log_output = 'out.log'
+        self.name = 'dbscanrn'
     
-    return cluster
+    def fit_transform(self, X):
+        # Logger setup
+        logging.basicConfig(
+            level=logging.INFO, 
+            filename=self.log_output, 
+            filemode='w+',
+            format='%(message)s'
+        )
+        
+        self.X = X
+        # result = dbscan(X, self.epsilon, self.minPts, self.distance)
+        result = dbscanrn(self.X, self.k, self.similarity)
+        self.y_pred, self.state, self.number_of_calc = result
+        return self.y_pred
