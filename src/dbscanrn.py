@@ -52,14 +52,14 @@ def get_rnn(point_indices, k, similarity, X):
 
 def dbscanrn(X, k, similarity):
     
-    # each X point can be in one of 3 stages
-    NOT_VISITED = 0 # not visited point
-    VISTED = 1 # non-core point
-    CLUSTERED = 2 # core point
+    # each data point can be in one of 3 stages
+    NOT_VISITED = -1 # not visited point
+    VISTED = 0 # non-core point
+    CLUSTERED = 1 # core point
     
     # initial setup
     n = X.shape[0]
-    cluster = np.array([0] * n) # cluster register
+    cluster = np.array([-1] * n) # cluster register
     state = np.array([NOT_VISITED] * n) # state register
     cluster_id = 1
     all_point_indices = list(range(len(X))) # inidces of all points

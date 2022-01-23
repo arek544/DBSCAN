@@ -22,18 +22,20 @@ def dbscan(X, epsilon, minPts, similarity):
     similarity - metric of similarity or distance bewteen two points
     '''
     # each data point can be in one of 3 stages
-    NOT_VISITED = 0 # not visited point
-    VISTED = 1 # non-core point
-    CLUSTERED = 2 # core point
+    NOT_VISITED = -1 # not visited point
+    VISTED = 0 # non-core point
+    CLUSTERED = 1 # core point
     
     # initial setup
     n = X.shape[0]
-    cluster = np.array([0] * n) # cluster register
+    cluster = np.array([-1] * n) # cluster register
     state = np.array([NOT_VISITED] * n) # state register
     cluster_id = 1
+    number_of_calc = {} # number of distance/similarity calculations
 
     def search(current_index, cluster_id, epsilon, minPts, similarity):
         neighbor_indices = get_neighbors(X, current_index, epsilon, similarity)
+        number_of_calc[current_index] = len(neighbor_indices)
         if len(neighbor_indices) >= minPts:
             state[current_index] = CLUSTERED
             cluster[current_index] = cluster_id
@@ -50,4 +52,4 @@ def dbscan(X, epsilon, minPts, similarity):
         search(not_visited_ids[0], cluster_id, epsilon, minPts, similarity)
         cluster_id += 1
     
-    return cluster
+    return cluster, state, number_of_calc

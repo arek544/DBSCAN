@@ -1,9 +1,12 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def display_points(X, y, title=None):
+def display_points(X, y, title=None, numerate=False):
     fig, ax = plt.subplots()
-    ax.scatter(X[:,0], X[:,1], c=y)
+    if numerate:
+        for i, txt in enumerate(range(len(X))):
+            ax.annotate(i, (X[i,0], X[i,1]), size=15)
+    ax.scatter(X[:,0], X[:,1], c=y)    
     plt.title(title)
     plt.show()
     
