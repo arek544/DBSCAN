@@ -1,12 +1,20 @@
 import pandas as pd
 import numpy as np
 from src.metrics import euclidean_distance
+from src.metrics import cosine_dissimilarity 
 import logging
 import time 
+from IPython.display import display
 
 def check_pessimistic_estimation(df, df2, current_point):
     # calculate real distance to current point
-    df2['real'] = df2.apply(lambda row: euclidean_distance(row[['x','y']], current_point[['x','y']].values[0]), axis=1)
+    # df2['real'] = df2.apply(
+        # lambda row: euclidean_distance(row[['x','y']], current_point[['x','y']].values[0]), axis=1
+    # ) # czy tu nie powinno być cosine dissimilarity?
+    df2['real'] = df2.apply(
+        lambda row: cosine_dissimilarity(row[['x','y']], current_point[['x','y']].values[0]
+    ), axis=1) # chyba powinno być tak !!! (działa wtedy ok)
+    
     df.update(df2)
     # choose max real distance
     max_val = df2.max()
@@ -16,7 +24,14 @@ def check_pessimistic_estimation(df, df2, current_point):
 def ti_knn(k, df, current_index, all_point_indices):
    
     # calculate distance to reference point, [0,1]
-    df['r_distnace'] = df.apply(lambda row: euclidean_distance(row[['x','y']], [0,1]), axis=1)
+    # df['r_distnace'] = df.apply(
+        # lambda row: euclidean_distance(row[['x','y']], [0,1]), 
+        # axis=1
+    # ) # czy tu nie powinno być cosine dissimilarity?
+    df['r_distnace'] = df.apply(
+        lambda row: cosine_dissimilarity(row[['x','y']], [0,1]), 
+        axis=1
+    ) # chyba powinno być tak !!! (działa wtedy ok)
     df = df.sort_values(by='r_distnace')
 
     # calculate distance to current point
@@ -28,7 +43,7 @@ def ti_knn(k, df, current_index, all_point_indices):
     # was > 1, changed to > 0
 
     dfn = check_pessimistic_estimation(df, df2, current_point)
-
+    
     # check if current df is empty
     def empty_df(df, df2, dfn):
         for n in range(0, df.shape[0]):
@@ -45,23 +60,24 @@ def ti_knn(k, df, current_index, all_point_indices):
     return result
 
 def get_tiknn(k, df, all_point_indices):
-    point_knn = {}
+    point_tiknn = {}
     for current_index in range(0, df.shape[0]):
         result = ti_knn(k, df, current_index, all_point_indices)
-        point_knn_result = result['index'].to_list()
-        point_knn_result = [int(point) for point in point_knn_result]
-        point_knn[current_index] = point_knn_result
-    return point_knn
+        point_tiknn_result = result['index'].to_list()
+        point_tiknn_result = [int(point) for point in point_tiknn_result]
+        point_tiknn[current_index] = point_tiknn_result
+    return point_tiknn
 
 
 def get_tirnn(k, df, all_point_indices):
     point_tirnn = {}
     point_tiknn = get_tiknn(k, df, all_point_indices)
     for current_index in all_point_indices:
-        rnn = get_pointwise_rnn(point_tiknn, current_index)
-        point_tirnn[current_index] = rnn
+        tirnn = get_pointwise_rnn(point_tiknn, current_index)
+        point_tirnn[current_index] = tirnn
         
     return point_tirnn, point_tiknn
+
 
 def get_pointwise_rnn(point_knn, current_index):
     rnn = []
@@ -69,6 +85,7 @@ def get_pointwise_rnn(point_knn, current_index):
         if current_index in point_knn[neighbor]:
             rnn.append(neighbor)
     return rnn
+
 
 def get_knn(current_index, neighbor_indices, k, similarity, X):
     '''
