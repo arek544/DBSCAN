@@ -7,19 +7,19 @@ import time
 from IPython.display import display
 
 def check_pessimistic_estimation(df, df2, current_point):
-    # calculate real distance to current point
-    # df2['real'] = df2.apply(
+    # calculate cosine_dissimilaritye to current point
+    # df2['cosine_dissimilarity'] = df2.apply(
         # lambda row: euclidean_distance(row[['x','y']], current_point[['x','y']].values[0]), axis=1
     # ) # czy tu nie powinno być cosine dissimilarity?
-    df2['real'] = df2.apply(
+    df2['cosine_dissimilarity'] = df2.apply(
         lambda row: cosine_dissimilarity(row[['x','y']], current_point[['x','y']].values[0]
     ), axis=1) # chyba powinno być tak !!! (działa wtedy ok)
     
     df.update(df2)
-    # choose max real distance
+    # choose max cosine_dissimilarity
     max_val = df2.max()
-    # get points with fake distance below max real distance 
-    return df[(df['pesimistic_distance'] < max_val['real']) & (df['pesimistic_distance'] > 1) & (df['real'].isna())]
+    # get points with fake distance below max cosine_dissimilarity 
+    return df[(df['pesimistic_distance'] < max_val['cosine_dissimilarity']) & (df['pesimistic_distance'] > 0) & (df['cosine_dissimilarity'].isna())]
 
 def ti_knn(k, df, current_index, all_point_indices):
    
@@ -36,7 +36,7 @@ def ti_knn(k, df, current_index, all_point_indices):
 
     # calculate distance to current point
     current_point = df[df['index']==current_index]
-    df['pesimistic_distance'] = abs(df['r_distnace'] - current_point['r_distnace'].values[0] )
+    df['pesimistic_distance'] = abs(df['r_distnace'] - current_point['r_distnace'].values[0])
 
     # get k-NN acording to pessimistic estimation 
     df2 = df[df['pesimistic_distance'] > 0].sort_values(by='pesimistic_distance').head(k)
@@ -48,14 +48,14 @@ def ti_knn(k, df, current_index, all_point_indices):
     def empty_df(df, df2, dfn):
         for n in range(0, df.shape[0]):
             if dfn.empty:
-                result = df.sort_values(by='real').head(k) 
+                result = df.sort_values(by='cosine_dissimilarity').head(k) 
                 return result
             else:
                 dfn = check_pessimistic_estimation(df, dfn, current_point)
                 empty_df(df, df2, dfn)
 
     result = empty_df(df, df2, dfn)
-    df['real']=np.nan
+    df['cosine_dissimilarity']=np.nan
     
     return result
 
@@ -119,7 +119,7 @@ def ti_dbscanrn(X, k, similarity):
     "index": all_point_indices,
     "x": X[all_point_indices][:,0],
     "y": X[all_point_indices][:,1],
-    'real': np.nan
+    'cosine_dissimilarity': np.nan
     })
     
     # each data point can be in one of 3 stages
