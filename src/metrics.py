@@ -1,10 +1,10 @@
 import numpy as np
 
 def euclidean_distance(a, b):
-    similarity_measure = 0
+    distance_measure = 0
     for i in range(len(a)):
-         similarity_measure += pow((a[i] - b[i]), 2)
-    return np.sqrt(similarity_measure)
+         distance_measure += pow((a[i] - b[i]), 2)
+    return np.sqrt(distance_measure)
 
 def cosine_dissimilarity(a, b):
     dot = 0

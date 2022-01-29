@@ -38,8 +38,10 @@ def dbscan(X, epsilon, minPts, similarity):
     cluster_id = 1
 
     def search(current_index, cluster_id, epsilon, minPts, similarity):
-        ''' Extend cluster '''
-        
+        ''' Extend cluster 
+        current_index - the point for which the search of Epsilon- neighborhood is being made,
+        cluster_id - number of the cluster that is currently being extended
+        '''
         # calculation of Eps-neighborhood for current_index
         timer1 = time.time() 
         neighbor_indices = get_neighbors(X, current_index, epsilon, similarity)
