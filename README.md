@@ -26,16 +26,16 @@ where:
 - [x] \# of dimensions of a point, 
 - [x] \# of points in the input file
 - [x] values of respective parameters of the used algorithm
-- [ ] values of dimensions of a reference point (for TI- versions)
-- [ ] partial runtimes for each important phase of algorithms such as:
+- [x] values of dimensions of a reference point (for TI- versions)
+- [x] partial runtimes for each important phase of algorithms such as:
     - [x] reading the input file, 
-    - [ ] calculation of distances to a reference point (for TI- versions), 
+    - [x] calculation of distances to a reference point (for TI- versions), 
     - [x] normalization of vectors (for versions working on normalized vectors), 
-    - [ ] sorting of points w.r.t. their distances to the reference point (for TI- versions), 
+    - [x] sorting of points w.r.t. their distances to the reference point (for TI- versions), 
     - [x] ~sorting of points w.r.t. their lengths (for optimized versions using the Tanimoto similarity),~ 
     - [x] calculation of Eps-neighborhood / k+NN / kNN / R-k+NN / R-kNN etc., 
     - [x] clustering, 
-    - [ ] saving results to OUT and STAT files
+    - [x] saving results to OUT and STAT files
 - [x] total runtime,
 - [x] \# of discovered clusters, 
 - [x] \# of discovered noise points, 
