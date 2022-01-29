@@ -11,15 +11,22 @@ def check_pessimistic_estimation(df, df2, current_point):
     # df2['cosine_dissimilarity'] = df2.apply(
         # lambda row: euclidean_distance(row[['x','y']], current_point[['x','y']].values[0]), axis=1
     # ) # czy tu nie powinno być cosine dissimilarity?
+    
     df2['cosine_dissimilarity'] = df2.apply(
         lambda row: cosine_dissimilarity(row[['x','y']], current_point[['x','y']].values[0]
     ), axis=1) # chyba powinno być tak !!! (działa wtedy ok)
+    current_index = current_point['index'].values[0]
+    logging.info(f'similarity_calculation, {current_index}, {df2.shape[0]},')
     
     df.update(df2)
     # choose max cosine_dissimilarity
     max_val = df2.max()
     # get points with fake distance below max cosine_dissimilarity 
-    return df[(df['pesimistic_distance'] < max_val['cosine_dissimilarity']) & (df['pesimistic_distance'] > 0) & (df['cosine_dissimilarity'].isna())]
+    return df[
+        (df['pesimistic_distance'] < max_val['cosine_dissimilarity']) & 
+        (df['pesimistic_distance'] > 0) & 
+        (df['cosine_dissimilarity'].isna())
+    ]
 
 def ti_knn(k, df, current_index, all_point_indices):
    
@@ -28,11 +35,17 @@ def ti_knn(k, df, current_index, all_point_indices):
         # lambda row: euclidean_distance(row[['x','y']], [0,1]), 
         # axis=1
     # ) # czy tu nie powinno być cosine dissimilarity?
+    
+    timer_start = time.time()
     df['r_distnace'] = df.apply(
         lambda row: cosine_dissimilarity(row[['x','y']], [0,1]), 
         axis=1
     ) # chyba powinno być tak !!! (działa wtedy ok)
+    logging.info(f'dist_to_ref_point_time,{current_index},{(time.time() - timer_start) * 1000},')
+    
+    timer_start = time.time()
     df = df.sort_values(by='r_distnace')
+    logging.info(f'sorting_dist_time,{current_index},{(time.time() - timer_start) * 1000},')
 
     # calculate distance to current point
     current_point = df[df['index']==current_index]
@@ -66,15 +79,26 @@ def get_tiknn(k, df, all_point_indices):
         point_tiknn_result = result['index'].to_list()
         point_tiknn_result = [int(point) for point in point_tiknn_result]
         point_tiknn[current_index] = point_tiknn_result
+        tiknn_indices_str = ';'.join(str(e) for e in point_tiknn_result)
+        logging.info(f'tiknn_neighbors_id,{current_index},,{tiknn_indices_str}')
+        logging.info(f'|tiknn_neighbors|,{current_index}, {len(point_tiknn_result)},')
+        
     return point_tiknn
 
 
 def get_tirnn(k, df, all_point_indices):
     point_tirnn = {}
+    
+    timer_start = time.time()
     point_tiknn = get_tiknn(k, df, all_point_indices)
+    logging.info(f'tiknn_time,,{(time.time() - timer_start) * 1000},')
+    
     for current_index in all_point_indices:
         tirnn = get_pointwise_rnn(point_tiknn, current_index)
         point_tirnn[current_index] = tirnn
+        tirnn_indices_str = ';'.join(str(e) for e in tirnn)
+        logging.info(f'tirnn_neighbors_id,{current_index},,{tirnn_indices_str}')
+        logging.info(f'|tirnn_neighbors|,{current_index}, {len(tirnn)},')
         
     return point_tirnn, point_tiknn
 
@@ -112,6 +136,7 @@ def get_knn(current_index, neighbor_indices, k, similarity, X):
 
 def ti_dbscanrn(X, k, similarity):
     
+    logging.info(f'start log,,,')
     # inidces of all points
     all_point_indices = list(range(len(X))) 
     
@@ -132,7 +157,10 @@ def ti_dbscanrn(X, k, similarity):
     cluster = np.array([-1] * n) # cluster register
     state = np.array([NOT_VISITED] * n) # state register
     cluster_id = 1
+    
+    timer_start = time.time()
     point_rnn, point_knn = get_tirnn(k, df, all_point_indices) # calculate RNN_k for all points
+    logging.info(f'tirnn_time,,{(time.time() - timer_start) * 1000},')
     
     # search for clusters
     def search(current_index, k):
@@ -160,8 +188,8 @@ def ti_dbscanrn(X, k, similarity):
         knn = get_knn(not_clustered_ids, clustered_ids, 1, similarity, X)
         cluster[not_clustered_ids] = cluster[knn[0]]
         state[not_clustered_ids] = CLUSTERED
-    number_of_calc = 0 # to do
-    return cluster, state, number_of_calc
+    logging.info(f'stop log,,,')
+    return cluster, state
 
 
 class DBSCANRN_opt:
@@ -173,15 +201,26 @@ class DBSCANRN_opt:
         self.name = 'dbscanrn_opt'
     
     def fit_transform(self, X):
+
         # Logger setup
         logging.basicConfig(
             level=logging.INFO, 
             filename=self.log_output, 
             filemode='w+',
-            format='%(message)s'
+            format='%(msecs)06f,%(message)s',
+            datefmt='%H:%M:%S'
         )
         
         self.X = X
         result = ti_dbscanrn(self.X, self.k, self.similarity)
-        self.y_pred, self.state, self.number_of_calc = result
+        self.y_pred, self.state = result
+        logging.shutdown()
         return self.y_pred
+    
+    def get_logs(self):
+        logs = pd.read_csv(
+            self.log_output,
+            names=['time [ms]', 'operation', 'point_id', 'value', 'string']
+        )
+        logs['time [ms]'] -= logs['time [ms]'].min()
+        return logs
