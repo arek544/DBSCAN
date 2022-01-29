@@ -13,7 +13,7 @@ class Dataset:
         self.name = Path(path).stem
         self.n_dimentions = self.X.shape[1]
         self.n_rows = self.X.shape[0]
-        self.runtime = timer_start - time.time()
+        self.runtime = (time.time() - timer_start) * 1000
     
     def load_data(self, path):
         header = ["x", "y", "real_cluster"]

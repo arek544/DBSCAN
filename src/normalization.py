@@ -9,5 +9,5 @@ class Norm:
     def run(self, X):
         timer_start = time.time()
         X = Normalizer().fit_transform(X)
-        self.runtime = timer_start - time.time()
+        self.runtime = (time.time() - timer_start) * 1000
         return X
