@@ -1,7 +1,8 @@
 import numpy as np
 import logging
 import time 
-
+import os
+import pandas as pd
 
 def get_neighbors(X, current_index, epsilon, similarity):
     '''
@@ -23,7 +24,8 @@ def dbscan(X, epsilon, minPts, similarity):
     minPts - minimum number of points that create cluster,
     similarity - metric of similarity or distance bewteen two points
     '''
-    timer0 = time.time() 
+    logging.info(f'start log,,')
+    
     # each data point can be in one of 3 stages
     NOT_VISITED = -1 # not visited point
     VISTED = 0 # non-core point
@@ -34,14 +36,15 @@ def dbscan(X, epsilon, minPts, similarity):
     cluster = np.array([-1] * n) # cluster register
     state = np.array([NOT_VISITED] * n) # state register
     cluster_id = 1
-    number_of_calc = {} # number of distance/similarity calculations
 
     def search(current_index, cluster_id, epsilon, minPts, similarity):
+        ''' Extend cluster '''
+        
         # calculation of Eps-neighborhood for current_index
         timer1 = time.time() 
         neighbor_indices = get_neighbors(X, current_index, epsilon, similarity)
-        logging.info(f'Eps,{current_index}, {time.time() - timer1}')
-        number_of_calc[current_index] = len(neighbor_indices)
+        logging.info(f'Eps_time, {current_index}, {time.time() - timer1}')
+        
         if len(neighbor_indices) >= minPts:
             state[current_index] = CLUSTERED
             cluster[current_index] = cluster_id
@@ -49,6 +52,9 @@ def dbscan(X, epsilon, minPts, similarity):
                 if state[neighbor_index] == NOT_VISITED:
                     state[neighbor_index] = CLUSTERED
                     cluster[neighbor_index] = cluster_id
+                    
+                    # number of distance/similarity calculations
+                    logging.info(f'similarity_calculation, {current_index}, 1')
                     search(neighbor_index, cluster_id, epsilon, minPts, similarity)
         else:
             state[current_index] = VISTED
@@ -57,9 +63,8 @@ def dbscan(X, epsilon, minPts, similarity):
         not_visited_ids = np.where(state==NOT_VISITED)[0]
         search(not_visited_ids[0], cluster_id, epsilon, minPts, similarity)
         cluster_id += 1
-        
-    logging.info(f'cluster,, {time.time() - timer0}')
-    return cluster, state, number_of_calc
+    logging.info(f'stop log,,')
+    return cluster, state
 
 
 class DBSCAN:
@@ -70,17 +75,30 @@ class DBSCAN:
         self.distance = similarity
         self.log_output = 'out.log'
         self.name = 'dbscan'
+        self.logs = None
     
     def fit_transform(self, X):
+        # if os.path.exists(self.log_output):
+        #     os.remove(self.log_output)
+            
         # Logger setup
         logging.basicConfig(
             level=logging.INFO, 
             filename=self.log_output, 
             filemode='w+',
-            format='%(message)s'
+            format='%(msecs)06f,%(message)s',
+            datefmt='%H:%M:%S'
         )
         
         self.X = X
         result = dbscan(self.X, self.epsilon, self.minPts, self.distance)
-        self.y_pred, self.state, self.number_of_calc = result
+        self.y_pred, self.state = result
+        logging.shutdown()
+        
+        self.logs = pd.read_csv(
+            self.log_output,
+            names=['time [ms]', 'operation', 'point_id', 'value']
+        )
+        self.logs['time [ms]'] -= self.logs['time [ms]'].min()
+        
         return self.y_pred
