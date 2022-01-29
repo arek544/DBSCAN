@@ -15,39 +15,39 @@ The results returned by a clustering algorithm for a given dataset and parameter
 (1) **OUT** - an output file that contains the following information on a separate line for each point in the dataset:
 point id, x, y, ...., \# of distance/similarity calculations, point type, CId
 where:
-- point id - the position of the point in the dataset (before possible sorting),
-- x, y, ... - dimension values
-- \# of distance/similarity calculations = \# of performed calculations of the distance/similarity of the point to other points in the dataset,
-- a point type is either a core point (denoted by 1), or a border point (denoted by 0), or a noise point (denoted by -1)
-- CId is either a cluster identifier (which is a natural number) or -1 in the case of noise points.
+- [x] point id - the position of the point in the dataset (before possible sorting),
+- [x] x, y, ... - dimension values
+- [x] \# of distance/similarity calculations = \# of performed calculations of the distance/similarity of the point to other points in the dataset,
+- [x] a point type is either a core point (denoted by 1), or a border point (denoted by 0), or a noise point (denoted by -1)
+- [x] CId is either a cluster identifier (which is a natural number) or -1 in the case of noise points.
 
 (2) **STAT** - a file with the following statistics:
-- name of the input file, 
-- \# of dimensions of a point, 
-- \# of points in the input file
-- values of respective parameters of the used algorithm
-- values of dimensions of a reference point (for TI- versions)
-- partial runtimes for each important phase of algorithms such as:
-    - reading the input file, 
-    - calculation of distances to a reference point (for TI- versions), 
-    - normalization of vectors (for versions working on normalized vectors), 
-    - sorting of points w.r.t. their distances to the reference point (for TI- versions), 
-    - sorting of points w.r.t. their lengths (for optimized versions using the Tanimoto similarity), 
-    - calculation of Eps-neighborhood / k+NN / kNN / R-k+NN / R-kNN etc., 
-    - clustering, 
-    - saving results to OUT and STAT files
-- total runtime
-- \# of discovered clusters, 
-- \# of discovered noise points, 
-- \# of discovered core points, 
-- \# of discovered border points - if applicable
-- avg \# of calculations of distance/similarity of a point to other points in the data set,
-- |TP|, 
-- |TN|, 
-- \# of pairs of points, 
-- RAND and Purity (when calculating RAND and Purity, the set of all noise points should be treated as a special type of a cluster) - calculated in the case of datasets whose real clusters are known
-- Silhouette coefficient (when calculating Silhouette coefficient, each noise point should be treated as a separate singleton cluster)
-- Davies Bouldin - calculated in the case of algorithms that do not discover noise points
+- [x] name of the input file, 
+- [x] \# of dimensions of a point, 
+- [x] \# of points in the input file
+- [x] values of respective parameters of the used algorithm
+- [ ] values of dimensions of a reference point (for TI- versions)
+- [ ] partial runtimes for each important phase of algorithms such as:
+    - [x] reading the input file, 
+    - [ ] calculation of distances to a reference point (for TI- versions), 
+    - [x] normalization of vectors (for versions working on normalized vectors), 
+    - [ ] sorting of points w.r.t. their distances to the reference point (for TI- versions), 
+    - [x] ~sorting of points w.r.t. their lengths (for optimized versions using the Tanimoto similarity),~ 
+    - [x] calculation of Eps-neighborhood / k+NN / kNN / R-k+NN / R-kNN etc., 
+    - [x] clustering, 
+    - [ ] saving results to OUT and STAT files
+- [x] total runtime,
+- [x] \# of discovered clusters, 
+- [x] \# of discovered noise points, 
+- [x] \# of discovered core points, 
+- [x] \# of discovered border points - if applicable
+- [x] avg \# of calculations of distance/similarity of a point to other points in the data set,
+- [x] |TP|, 
+- [x] |TN|, 
+- [x] \# of pairs of points, 
+- [x] RAND and Purity (when calculating RAND and Purity, the set of all noise points should be treated as a special type of a cluster) - calculated in the case of datasets whose real clusters are known
+- [x] Silhouette coefficient (when calculating Silhouette coefficient, each noise point should be treated as a separate singleton cluster)
+- [x] Davies Bouldin - calculated in the case of algorithms that do not discover noise points
 
 (3) **DEBUG** – a file that contains important information for each point in the dataset on a separate line. For example, in the case of the NBC algorithm using the Euclidean distance and TI, the following information should be returned for each point:
 
