@@ -1,48 +1,48 @@
-263.708115,start log,,,
-264.833689,Eps_time,0, 0.00023651123046875
-265.406609,|Eps_neighbors|,0, 3,
-266.004801,Eps_neighbor_id,0,,0;1;2
-266.764402,similarity_calculation, 0, 1,
-267.679691,Eps_time,1, 0.0003056526184082031
-268.306971,|Eps_neighbors|,1, 2,
-269.006014,Eps_neighbor_id,1,,0;1
-269.629717,similarity_calculation, 0, 1,
-270.457029,Eps_time,2, 0.00020265579223632812
-271.009207,|Eps_neighbors|,2, 4,
-271.589518,Eps_neighbor_id,2,,0;2;5;7
-272.192955,similarity_calculation, 2, 1,
-273.203373,Eps_time,5, 0.00019288063049316406
-274.977684,|Eps_neighbors|,5, 5,
-275.548220,Eps_neighbor_id,5,,2;5;6;7;11
-276.070833,similarity_calculation, 5, 1,
-276.814938,Eps_time,6, 0.00023984909057617188
-277.328968,|Eps_neighbors|,6, 3,
-277.871609,Eps_neighbor_id,6,,5;6;11
-278.367996,similarity_calculation, 6, 1,
-279.042721,Eps_time,11, 0.00017333030700683594
-279.591084,|Eps_neighbors|,11, 5,
-280.089617,Eps_neighbor_id,11,,5;6;7;10;11
-280.583620,similarity_calculation, 11, 1,
-281.246901,Eps_time,7, 0.0001704692840576172
-281.840801,|Eps_neighbors|,7, 4,
-282.340765,Eps_neighbor_id,7,,2;5;7;11
-282.898188,similarity_calculation, 11, 1,
-283.800125,Eps_time,10, 0.00023221969604492188
-284.294128,|Eps_neighbors|,10, 2,
-284.804106,Eps_neighbor_id,10,,10;11
-285.556555,Eps_time,3, 0.000164031982421875
-286.061049,|Eps_neighbors|,3, 4,
-286.551476,Eps_neighbor_id,3,,3;4;8;9
-287.077665,similarity_calculation, 3, 1,
-287.823677,Eps_time,4, 0.00023555755615234375
-288.326502,|Eps_neighbors|,4, 4,
-288.847446,Eps_neighbor_id,4,,3;4;8;9
-289.401770,similarity_calculation, 4, 1,
-290.079117,Eps_time,8, 0.00017523765563964844
-290.567160,|Eps_neighbors|,8, 4,
-291.069984,Eps_neighbor_id,8,,3;4;8;9
-291.563749,similarity_calculation, 8, 1,
-292.309761,Eps_time,9, 0.0001914501190185547
-292.874575,|Eps_neighbors|,9, 4,
-293.427944,Eps_neighbor_id,9,,3;4;8;9
-294.007301,stop log,,,
+305.736542,start log,,,
+306.814194,Eps_time,0,0.18405914306640625,
+307.358503,|Eps_neighbors|,0, 3,
+307.874918,Eps_neighbor_id,0,,0;1;2
+308.364868,similarity_calculation, 0, 1,
+309.163570,Eps_time,1,0.23984909057617188,
+309.810400,|Eps_neighbors|,1, 2,
+310.347080,Eps_neighbor_id,1,,0;1
+311.048269,similarity_calculation, 0, 1,
+311.912775,Eps_time,2,0.21648406982421875,
+312.466621,|Eps_neighbors|,2, 4,
+312.986851,Eps_neighbor_id,2,,0;2;5;7
+313.444138,similarity_calculation, 2, 1,
+314.112425,Eps_time,5,0.18286705017089844,
+314.589739,|Eps_neighbors|,5, 5,
+315.057993,Eps_neighbor_id,5,,2;5;6;7;11
+315.503836,similarity_calculation, 5, 1,
+316.246748,Eps_time,6,0.17213821411132812,
+316.693306,|Eps_neighbors|,6, 3,
+317.138195,Eps_neighbor_id,6,,5;6;11
+317.654610,similarity_calculation, 6, 1,
+318.274498,Eps_time,11,0.1678466796875,
+318.716764,|Eps_neighbors|,11, 5,
+319.188118,Eps_neighbor_id,11,,5;6;7;10;11
+319.673300,similarity_calculation, 11, 1,
+320.276260,Eps_time,7,0.16307830810546875,
+320.713997,|Eps_neighbors|,7, 4,
+321.154833,Eps_neighbor_id,7,,2;5;7;11
+321.649551,similarity_calculation, 11, 1,
+322.248220,Eps_time,10,0.16021728515625,
+322.685957,|Eps_neighbors|,10, 2,
+323.143005,Eps_neighbor_id,10,,10;11
+323.892117,Eps_time,3,0.16260147094726562,
+324.335575,|Eps_neighbors|,3, 4,
+324.799538,Eps_neighbor_id,3,,3;4;8;9
+325.248480,similarity_calculation, 3, 1,
+325.856686,Eps_time,4,0.1685619354248047,
+326.286316,|Eps_neighbors|,4, 4,
+326.732397,Eps_neighbor_id,4,,3;4;8;9
+327.474356,similarity_calculation, 4, 1,
+328.208923,Eps_time,8,0.17976760864257812,
+328.671932,|Eps_neighbors|,8, 4,
+329.174757,Eps_neighbor_id,8,,3;4;8;9
+329.662323,similarity_calculation, 8, 1,
+330.270767,Eps_time,9,0.17261505126953125,
+330.732346,|Eps_neighbors|,9, 4,
+331.173182,Eps_neighbor_id,9,,3;4;8;9
+331.721783,stop log,,,

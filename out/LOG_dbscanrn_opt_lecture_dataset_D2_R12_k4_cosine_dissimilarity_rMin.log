@@ -1,0 +1,88 @@
+842.842579,start log,,,
+858.655453,dist_to_ref_point_time,0,13.524293899536133,
+860.724211,sorting_dist_time,0,1.1734962463378906,
+874.656916,similarity_calculation, 0, 4,
+884.039640,tiknn_neighbors_id,0,,7;2;1;11
+884.897232,|tiknn_neighbors|,0, 4,
+896.968365,dist_to_ref_point_time,1,11.348485946655273,
+898.428679,sorting_dist_time,1,0.629425048828125,
+911.760092,similarity_calculation, 1, 4,
+920.107603,tiknn_neighbors_id,1,,7;0;2;11
+920.803785,|tiknn_neighbors|,1, 4,
+932.147026,dist_to_ref_point_time,2,10.754823684692383,
+933.680058,sorting_dist_time,2,0.5786418914794922,
+946.425915,similarity_calculation, 2, 4,
+954.991341,tiknn_neighbors_id,2,,11;0;7;5
+955.967188,|tiknn_neighbors|,2, 4,
+967.498779,dist_to_ref_point_time,3,10.80775260925293,
+969.230890,sorting_dist_time,3,0.7841587066650391,
+981.929064,similarity_calculation, 3, 4,
+991.005182,tiknn_neighbors_id,3,,9;4;8;10
+991.911888,|tiknn_neighbors|,3, 4,
+2.678156,dist_to_ref_point_time,4,10.175704956054688,
+4.257441,sorting_dist_time,4,0.6968975067138672,
+20.006180,similarity_calculation, 4, 4,
+29.227257,tiknn_neighbors_id,4,,3;8;9;10
+29.941320,|tiknn_neighbors|,4, 4,
+41.810036,dist_to_ref_point_time,5,11.353015899658203,
+43.452978,sorting_dist_time,5,0.6425380706787109,
+56.183577,similarity_calculation, 5, 4,
+64.800739,tiknn_neighbors_id,5,,11;2;6;0
+65.690517,|tiknn_neighbors|,5, 4,
+76.483488,dist_to_ref_point_time,6,10.195255279541016,
+77.979326,sorting_dist_time,6,0.6275177001953125,
+90.327024,similarity_calculation, 6, 4,
+98.903656,tiknn_neighbors_id,6,,5;11;2;0
+99.740982,|tiknn_neighbors|,6, 4,
+110.783339,dist_to_ref_point_time,7,10.432243347167969,
+112.226248,sorting_dist_time,7,0.5786418914794922,
+125.036001,similarity_calculation, 7, 4,
+133.363008,tiknn_neighbors_id,7,,0;1;2;11
+134.237289,|tiknn_neighbors|,7, 4,
+145.573378,dist_to_ref_point_time,8,10.570764541625977,
+147.183657,sorting_dist_time,8,0.5741119384765625,
+160.029173,similarity_calculation, 8, 4,
+168.343306,tiknn_neighbors_id,8,,4;3;9;10
+169.203281,|tiknn_neighbors|,8, 4,
+180.140257,dist_to_ref_point_time,9,10.333776473999023,
+181.448221,sorting_dist_time,9,0.6148815155029297,
+193.856001,similarity_calculation, 9, 4,
+202.552319,tiknn_neighbors_id,9,,3;4;8;10
+203.430891,|tiknn_neighbors|,9, 4,
+214.258909,dist_to_ref_point_time,10,10.238885879516602,
+215.815783,sorting_dist_time,10,0.5784034729003906,
+228.716850,similarity_calculation, 10, 4,
+237.427711,tiknn_neighbors_id,10,,9;3;4;8
+238.140106,|tiknn_neighbors|,10, 4,
+248.878002,dist_to_ref_point_time,11,10.137319564819336,
+250.380993,sorting_dist_time,11,0.5846023559570312,
+262.976408,similarity_calculation, 11, 4,
+271.681309,tiknn_neighbors_id,11,,2;0;5;6
+272.565603,|tiknn_neighbors|,11, 4,
+273.159742,tiknn_time,,428.0691146850586,
+273.724318,tirnn_neighbors_id,0,,7;2;1;11
+274.267435,|tirnn_neighbors|,0, 4,
+274.826527,tirnn_neighbors_id,1,,7;0
+275.371075,|tirnn_neighbors|,1, 2,
+275.930405,tirnn_neighbors_id,2,,11;0;7;5
+276.473045,|tirnn_neighbors|,2, 4,
+277.030468,tirnn_neighbors_id,3,,9;4;8;10
+277.572632,|tirnn_neighbors|,3, 4,
+278.128862,tirnn_neighbors_id,4,,3;8;9;10
+278.677464,|tirnn_neighbors|,4, 4,
+279.206514,tirnn_neighbors_id,5,,11;2;6
+279.760361,|tirnn_neighbors|,5, 3,
+280.489922,tirnn_neighbors_id,6,,5;11
+281.033993,|tirnn_neighbors|,6, 2,
+281.593561,tirnn_neighbors_id,7,,0;1;2
+282.134771,|tirnn_neighbors|,7, 3,
+282.690525,tirnn_neighbors_id,8,,4;3;9;10
+283.233881,|tirnn_neighbors|,8, 4,
+283.803463,tirnn_neighbors_id,9,,3;4;8;10
+284.350634,|tirnn_neighbors|,9, 4,
+284.912825,tirnn_neighbors_id,10,,9;3;4;8
+285.459042,|tirnn_neighbors|,10, 4,
+286.018848,tirnn_neighbors_id,11,,2;0;5;6
+286.558867,|tirnn_neighbors|,11, 4,
+287.112951,tirnn_time,,442.0280456542969,
+288.039684,stop log,,,
