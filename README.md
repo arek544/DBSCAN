@@ -22,15 +22,30 @@ where:
 - CId is either a cluster identifier (which is a natural number) or -1 in the case of noise points.
 
 (2) **STAT** - a file with the following statistics:
-- name of the input file, \# of dimensions of a point, \# of points in the input file
+- name of the input file, 
+- \# of dimensions of a point, 
+- \# of points in the input file
 - values of respective parameters of the used algorithm
 - values of dimensions of a reference point (for TI- versions)
 - partial runtimes for each important phase of algorithms such as:
-reading the input file, calculation of distances to a reference point (for TI- versions), normalization of vectors (for versions working on normalized vectors), sorting of points w.r.t. their distances to the reference point (for TI- versions), sorting of points w.r.t. their lengths (for optimized versions using the Tanimoto similarity), calculation of Eps-neighborhood / k+NN / kNN / R-k+NN / R-kNN etc., clustering, saving results to OUT and STAT files
+    - reading the input file, 
+    - calculation of distances to a reference point (for TI- versions), 
+    - normalization of vectors (for versions working on normalized vectors), 
+    - sorting of points w.r.t. their distances to the reference point (for TI- versions), 
+    - sorting of points w.r.t. their lengths (for optimized versions using the Tanimoto similarity), 
+    - calculation of Eps-neighborhood / k+NN / kNN / R-k+NN / R-kNN etc., 
+    - clustering, 
+    - saving results to OUT and STAT files
 - total runtime
-- \# of discovered clusters, # of discovered noise points, \# of discovered core points, \# of discovered border points - if applicable
+- \# of discovered clusters, 
+- \# of discovered noise points, 
+- \# of discovered core points, 
+- \# of discovered border points - if applicable
 - avg \# of calculations of distance/similarity of a point to other points in the data set,
-- |TP|, |TN|, \# of pairs of points, RAND and Purity (when calculating RAND and Purity, the set of all noise points should be treated as a special type of a cluster) - calculated in the case of datasets whose real clusters are known
+- |TP|, 
+- |TN|, 
+- \# of pairs of points, 
+- RAND and Purity (when calculating RAND and Purity, the set of all noise points should be treated as a special type of a cluster) - calculated in the case of datasets whose real clusters are known
 - Silhouette coefficient (when calculating Silhouette coefficient, each noise point should be treated as a separate singleton cluster)
 - Davies Bouldin - calculated in the case of algorithms that do not discover noise points
 
