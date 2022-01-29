@@ -80,9 +80,7 @@ class DBSCAN:
         self.name = 'dbscan'
     
     def fit_transform(self, X):
-        # if os.path.exists(self.log_output):
-        #     os.remove(self.log_output)
-            
+
         # Logger setup
         logging.basicConfig(
             level=logging.INFO, 
@@ -96,7 +94,6 @@ class DBSCAN:
         result = dbscan(self.X, self.epsilon, self.minPts, self.distance)
         self.y_pred, self.state = result
         logging.shutdown()
-        
         return self.y_pred
     
     def get_logs(self):
