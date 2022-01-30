@@ -45,7 +45,7 @@ def dbscan(X, epsilon, minPts, similarity):
         # calculation of Eps-neighborhood for current_index
         timer1 = time.time() 
         neighbor_indices = get_neighbors(X, current_index, epsilon, similarity)
-        logging.info(f'Eps_time,{current_index}, {time.time() - timer1}')
+        logging.info(f'Eps_time,{current_index},{(time.time() - timer1)*1000},')
         logging.info(f'|Eps_neighbors|,{current_index}, {len(neighbor_indices)},')
         neighbor_indices_str =';'.join(str(e) for e in neighbor_indices)
         logging.info(f'Eps_neighbor_id,{current_index},,{neighbor_indices_str}')
