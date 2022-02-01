@@ -1,72 +1,59 @@
 import pandas as pd
 import numpy as np
-from src.metrics import euclidean_distance
-from src.metrics import cosine_dissimilarity 
+from src.metrics import cosine_dissimilarity
 import logging
 import time 
 from IPython.display import display
 
-# def check_pessimistic_estimation(df, df2, current_point):
-#     # calculate cosine_dissimilaritye to current point
-#     # df2['cosine_dissimilarity'] = df2.apply(
-#         # lambda row: euclidean_distance(row[['x','y']], current_point[['x','y']].values[0]), axis=1
-#     # ) 
-    
-#     df2['cosine_dissimilarity'] = df2.apply(
-#         lambda row: cosine_dissimilarity(row[['x','y']], current_point[['x','y']].values[0]
-#     ), axis=1) 
-#     current_index = current_point['index'].values[0]
-#     logging.info(f'similarity_calculation, {current_index}, {df2.shape[0]},')
-    
-#     df.update(df2)
-#     # choose max cosine_dissimilarity
-#     max_val = df2.max()
-#     # get points with refernace distance below max cosine_dissimilarity 
-#     return df[
-#         (df['pesimistic_distance'] < max_val['cosine_dissimilarity']) & 
-#         (df['pesimistic_distance'] > 0) & 
-#         (df['cosine_dissimilarity'].isna())
-#     ]
+def pessimistic_estimation(df, dfx, x, current_index, real_max, up_row, down_row, idx, k, last, swap=False):
+    next_row = None
 
-def pessimistic_estimation(df, dfx, x, current_index, real_max, up_row, down_row, idx):
-    up_row = idx - up_row -1
-    down_row = idx + down_row +1
-    if (up_row < 0):
-        up_row = 0
-    if (down_row  > df['index'].max()):
-        down_row = df['index'].max()
-    dfy = df.iloc[[up_row, down_row]]
+    if swap or (down_row == df['index'].max()):
+        if up_row != 0:
+            up_row = up_row - 1
+        next_row = up_row
+        swap = False
+    elif not swap or (up_row == 0): 
+        if down_row != df['index'].max():
+            down_row = down_row + 1
+        next_row = down_row
+        swap = True    
+
+    if idx <= int(np.floor(k/2)):
+        next_row = down_row
+        swap = False
+
+    if idx >= df['index'].max()-int(np.ceil(k/2)):
+        next_row = up_row
+        swap = True
+    
+    dfy = df.iloc[next_row]
     dfy['pessimistic_estimation'] = abs(x-dfy['r_distnace'])
     dfy['check'] = dfy['pessimistic_estimation'] < real_max
-    if dfy['check'].any():
-        mask = dfy['check']
-        dfy.loc[mask, 'cosine_dissimilarity'] = dfy[mask].apply(
-            lambda row: cosine_dissimilarity(row[['x','y']], df[df['index']==current_index][['x','y']].values[0]
-        ), axis=1) 
-        dfx = dfx[dfx['cosine_dissimilarity'] != real_max]
-        new_candidate = dfy.loc[dfy['cosine_dissimilarity'].idxmin()]
-        dfx = dfx.append(new_candidate[['index', 'x','y', 'cosine_dissimilarity', 'r_distnace']])
-        # zapętla się i w nieskończoność bierze indeks 0
-        # dorobić warunek: if new_candidate is in dfx and the second one is false: return dfx; if new_candidate is in dfx and second one is True, new_candidate = second + pessimistoc_estimation(), else: pessimistic_estimation()
-        pessimistic_estimation(df, dfx, x, current_index, real_max, up_row, down_row, idx)
-    else:
+    previous_check = bool(dfy['check'])
+    if not last and not previous_check:
         return dfx
+    if previous_check:
+        dfy['cosine_dissimilarity'] = cosine_dissimilarity(dfy[['x','y']].values, df[df['index']==current_index][['x','y']].values[0])
+        if dfy['cosine_dissimilarity'] < real_max:
+            dfx = dfx[dfx['cosine_dissimilarity'] != real_max]
+            dfx = dfx.append(dfy[['index', 'x','y', 'cosine_dissimilarity', 'r_distnace']])
+            real_max = dfx["cosine_dissimilarity"].max()   
+            return pessimistic_estimation(df, dfx, x, current_index, real_max, up_row, down_row, idx, k, previous_check, swap)
+    return pessimistic_estimation(df, dfx, x, current_index, real_max, up_row, down_row, idx, k, previous_check, swap)
 
 
 
 def ti_knn(k, df, current_index, all_point_indices):
    
     # calculate distance to reference point, [0,1]
-    # df['r_distnace'] = df.apply(
-        # lambda row: euclidean_distance(row[['x','y']], [0,1]), 
-        # axis=1
-    # ) 
-    
-    timer_start = time.time()
     df['r_distnace'] = df.apply(
         lambda row: cosine_dissimilarity(row[['x','y']], [0,1]), 
         axis=1
     ) 
+    
+    timer_start = time.time()
+
     logging.info(f'dist_to_ref_point_time,,{(time.time() - timer_start) * 1000},')
     
     timer_start = time.time()
@@ -79,50 +66,24 @@ def ti_knn(k, df, current_index, all_point_indices):
     up_row = idx - int(np.floor(k/2))
     down_row = idx + int(np.ceil(k/2))
     if (up_row == 0):
-        down_row = down_row + (k-3)
+        down_row = k
     if (up_row < 0):
         up_row = 0
-        down_row = down_row + (k-3)
+        down_row = k
     if (down_row  > df['index'].max()):
         down_row = df['index'].max()
+        up_row = idx - k
     dfx = df.iloc[up_row: down_row+1]
     dfx = dfx[dfx['index']!=current_index]
 
     dfx['cosine_dissimilarity'] = dfx.apply(
         lambda row: cosine_dissimilarity(row[['x','y']], df[df['index']==current_index][['x','y']].values[0]
-    ), axis=1) 
+        ), axis=1) 
 
-    x = df[df['index']==current_index]['r_distnace'].values[0]
+    current_index_r_distance = df[df['index']==current_index]['r_distnace'].values[0]
     real_max = dfx["cosine_dissimilarity"].max()
-    dfx = pessimistic_estimation(df, dfx, x, current_index, real_max, up_row, down_row, idx)
-
-    
-    # # df2['cosine_dissimilarity'] = df2.apply(
-    # #     lambda row: cosine_dissimilarity(row[['x','y']], current_point[['x','y']].values[0]
-    # # ), axis=1) 
-
-    
-    # current_point = df[df['index']==current_index]
-    # df['pesimistic_distance'] = abs(df['r_distnace'] - current_point['r_distnace'].values[0])
-
-    # # get k-NN acording to pessimistic estimation 
-    # df2 = df[df['pesimistic_distance'] > 0].sort_values(by='pesimistic_distance').head(k)
-    # # was > 1, changed to > 0
-
-    # dfn = check_pessimistic_estimation(df, df2, current_point)
-    
-    # # check if current df is empty
-    # def empty_df(df, df2, dfn):
-    #     for n in range(0, df.shape[0]):
-    #         if dfn.empty:
-    #             result = df.sort_values(by='cosine_dissimilarity').head(k) 
-    #             return result
-    #         else:
-    #             dfn = check_pessimistic_estimation(df, dfn, current_point)
-    #             empty_df(df, df2, dfn)
-
-    # result = empty_df(df, df2, dfn)
-    # df['cosine_dissimilarity']=np.nan
+    last = True
+    dfx = pessimistic_estimation(df, dfx, current_index_r_distance, current_index, real_max, up_row, down_row, idx, k, last)
     
     return dfx
 

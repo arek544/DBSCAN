@@ -44,7 +44,7 @@ display_points(X, y, 'Normalized', numerate=True)
 # %%
 timer_start = time.time()
 params = {
-    'k': 4,
+    'k': 2,
     'similarity': cosine_dissimilarity
 }
 
@@ -61,7 +61,7 @@ name = get_name(
 algorithm.log_output = f'./out/LOG_{name}.log'
 algorithm.fit_transform(X)
 total_runtime = (time.time() - timer_start) * 1000
-
+print(algorithm.y_pred)
 display_points(algorithm.X, algorithm.y_pred)
 score = evaluate(algorithm.y_pred, y, algorithm.X)
 
