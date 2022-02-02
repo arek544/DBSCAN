@@ -6,12 +6,17 @@ import logging
 import time 
 from IPython.display import display
 
-def pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, previous_check):
-
+def pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k):
+    
+    #choosing the next point to check if he is a better neighbor
     dfy = df.iloc[down_row]
+
+    #checking whether the pessimistic estimation of this point is smaller than the real_max
     dfy['check'] = dfy['pessimistic_estimation'] < real_max
     previous_check = bool(dfy['check'])
-    if not previous_check:
+
+    down_row = down_row + 1
+    if not  previous_check:
         return dfx
     if previous_check:
         dfy['cosine_dissimilarity'] = cosine_dissimilarity(dfy[['x','y']].values, df[df['index']==current_index][['x','y']].values[0])
@@ -19,48 +24,57 @@ def pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, p
             dfx = dfx[dfx['cosine_dissimilarity'] != real_max]
             dfx = dfx.append(dfy[['index', 'x','y', 'cosine_dissimilarity', 'r_distnace']])
             real_max = dfx["cosine_dissimilarity"].max()   
-            return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, previous_check)
-    return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, previous_check)
+            return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k)
+    return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k)
 
 
-def ti_knn(k, df, current_index, all_point_indices):
-   
+def ti_knn(k, df, current_index):
+
     # calculate distance to reference point, [0,1]
+    timer_start = time.time()
     df['r_distnace'] = df.apply(
         lambda row: cosine_dissimilarity(row[['x','y']], [0,1]), 
         axis=1
     ) 
-    
-    timer_start = time.time()
-
     logging.info(f'dist_to_ref_point_time,,{(time.time() - timer_start) * 1000},')
     
+    # calculate pessimistic estimation
     timer_start = time.time()
-    logging.info(f'sorting_dist_time,{current_index},{(time.time() - timer_start) * 1000},')
     current_index_r_distance = df[df['index']==current_index]['r_distnace'].values[0]
+    logging.info(f'pessimistic_estimation_time,{current_index},{(time.time() - timer_start) * 1000},')
     df['pessimistic_estimation'] = abs(current_index_r_distance-df['r_distnace'])
+
+    timer_start = time.time()
     df = df.sort_values(by='pessimistic_estimation')
+    logging.info(f'sorting_pe_time,{current_index},{(time.time() - timer_start) * 1000},')
+    
     df.reset_index(inplace=True, drop=True)
+
+    #selecting candidates for k - nearest neighbors
     dfx = df.head(k+1)
     dfx = dfx[dfx['index']!=current_index]
-
-    # calculate distance to current point
+   
     idx = df[df['index']==current_index].index.values[0]
     down_row = dfx.iloc[[k-1]].index.values[0] + 1
 
+    #calculation of cosine dissimilarity for candidates
     dfx['cosine_dissimilarity'] = dfx.apply(
         lambda row: cosine_dissimilarity(row[['x','y']], df[df['index']==current_index][['x','y']].values[0]
         ), axis=1) 
+
+    # choosing the largest real dissimilarity cosine from among the candidates    
     real_max = dfx["cosine_dissimilarity"].max()
-    last = True
-    dfx = pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, last)
+
+    # looking for better candidates
+    dfx = pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k)
     
+    # returning the k-nearest neighbors for current_index
     return dfx
 
 def get_tiknn(k, df, all_point_indices):
     point_tiknn = {}
     for current_index in range(0, df.shape[0]):
-        result = ti_knn(k, df, current_index, all_point_indices)
+        result = ti_knn(k, df, current_index)
         point_tiknn_result = result['index'].to_list()
         point_tiknn_result = [int(point) for point in point_tiknn_result]
         point_tiknn[current_index] = point_tiknn_result
