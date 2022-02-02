@@ -1,3 +1,4 @@
+from turtle import down
 import pandas as pd
 import numpy as np
 from src.metrics import cosine_dissimilarity
@@ -5,33 +6,12 @@ import logging
 import time 
 from IPython.display import display
 
-def pessimistic_estimation(df, dfx, x, current_index, real_max, up_row, down_row, idx, k, last, swap=False):
-    next_row = None
+def pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, previous_check):
 
-    if swap or (down_row == df['index'].max()):
-        if up_row != 0:
-            up_row = up_row - 1
-        next_row = up_row
-        swap = False
-    elif not swap or (up_row == 0): 
-        if down_row != df['index'].max():
-            down_row = down_row + 1
-        next_row = down_row
-        swap = True    
-
-    if idx <= int(np.floor(k/2)):
-        next_row = down_row
-        swap = False
-
-    if idx >= df['index'].max()-int(np.ceil(k/2)):
-        next_row = up_row
-        swap = True
-    
-    dfy = df.iloc[next_row]
-    dfy['pessimistic_estimation'] = abs(x-dfy['r_distnace'])
+    dfy = df.iloc[down_row]
     dfy['check'] = dfy['pessimistic_estimation'] < real_max
     previous_check = bool(dfy['check'])
-    if not last and not previous_check:
+    if not previous_check:
         return dfx
     if previous_check:
         dfy['cosine_dissimilarity'] = cosine_dissimilarity(dfy[['x','y']].values, df[df['index']==current_index][['x','y']].values[0])
@@ -39,9 +19,8 @@ def pessimistic_estimation(df, dfx, x, current_index, real_max, up_row, down_row
             dfx = dfx[dfx['cosine_dissimilarity'] != real_max]
             dfx = dfx.append(dfy[['index', 'x','y', 'cosine_dissimilarity', 'r_distnace']])
             real_max = dfx["cosine_dissimilarity"].max()   
-            return pessimistic_estimation(df, dfx, x, current_index, real_max, up_row, down_row, idx, k, previous_check, swap)
-    return pessimistic_estimation(df, dfx, x, current_index, real_max, up_row, down_row, idx, k, previous_check, swap)
-
+            return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, previous_check)
+    return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, previous_check)
 
 
 def ti_knn(k, df, current_index, all_point_indices):
@@ -57,33 +36,24 @@ def ti_knn(k, df, current_index, all_point_indices):
     logging.info(f'dist_to_ref_point_time,,{(time.time() - timer_start) * 1000},')
     
     timer_start = time.time()
-    df = df.sort_values(by='r_distnace')
     logging.info(f'sorting_dist_time,{current_index},{(time.time() - timer_start) * 1000},')
+    current_index_r_distance = df[df['index']==current_index]['r_distnace'].values[0]
+    df['pessimistic_estimation'] = abs(current_index_r_distance-df['r_distnace'])
+    df = df.sort_values(by='pessimistic_estimation')
+    df.reset_index(inplace=True, drop=True)
+    dfx = df.head(k+1)
+    dfx = dfx[dfx['index']!=current_index]
 
     # calculate distance to current point
-    df.reset_index(inplace=True, drop=True)
     idx = df[df['index']==current_index].index.values[0]
-    up_row = idx - int(np.floor(k/2))
-    down_row = idx + int(np.ceil(k/2))
-    if (up_row == 0):
-        down_row = k
-    if (up_row < 0):
-        up_row = 0
-        down_row = k
-    if (down_row  > df['index'].max()):
-        down_row = df['index'].max()
-        up_row = idx - k
-    dfx = df.iloc[up_row: down_row+1]
-    dfx = dfx[dfx['index']!=current_index]
+    down_row = dfx.iloc[[k-1]].index.values[0] + 1
 
     dfx['cosine_dissimilarity'] = dfx.apply(
         lambda row: cosine_dissimilarity(row[['x','y']], df[df['index']==current_index][['x','y']].values[0]
         ), axis=1) 
-
-    current_index_r_distance = df[df['index']==current_index]['r_distnace'].values[0]
     real_max = dfx["cosine_dissimilarity"].max()
     last = True
-    dfx = pessimistic_estimation(df, dfx, current_index_r_distance, current_index, real_max, up_row, down_row, idx, k, last)
+    dfx = pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, last)
     
     return dfx
 
