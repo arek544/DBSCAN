@@ -28,7 +28,7 @@ def dbscan(X, epsilon, minPts, similarity):
     
     # each data point can be in one of 3 stages
     NOT_VISITED = -1 # not visited point
-    VISTED = 0 # non-core point
+    VISITED = 0 # non-core point
     CLUSTERED = 1 # core point
     
     # initial setup
@@ -54,7 +54,7 @@ def dbscan(X, epsilon, minPts, similarity):
             state[current_index] = CLUSTERED
             cluster[current_index] = cluster_id
             for neighbor_index in neighbor_indices:
-                if state[neighbor_index] == NOT_VISITED:
+                if (state[neighbor_index] == VISITED) or (state[neighbor_index] == NOT_VISITED):
                     state[neighbor_index] = CLUSTERED
                     cluster[neighbor_index] = cluster_id
                     
@@ -62,7 +62,7 @@ def dbscan(X, epsilon, minPts, similarity):
                     logging.info(f'similarity_calculation, {current_index}, 1,')
                     search(neighbor_index, cluster_id, epsilon, minPts, similarity)
         else:
-            state[current_index] = VISTED
+            state[current_index] = VISITED
 
     while NOT_VISITED in state:
         not_visited_ids = np.where(state==NOT_VISITED)[0]
