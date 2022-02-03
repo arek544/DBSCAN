@@ -1,5 +1,5 @@
 # %%
-cd ..
+cd ../..
 
 # %%
 %load_ext autoreload
@@ -44,7 +44,7 @@ display_points(X, y, 'Normalized', numerate=True)
 # %%
 timer_start = time.time()
 params = {
-    'k': 2,
+    'k': 4,
     'similarity': cosine_dissimilarity
 }
 
@@ -63,7 +63,7 @@ algorithm.fit_transform(X)
 total_runtime = (time.time() - timer_start) * 1000
 print(algorithm.y_pred)
 display_points(algorithm.X, algorithm.y_pred)
-score = evaluate(algorithm.y_pred, y, algorithm.X)
+# score = evaluate(algorithm.y_pred, y, algorithm.X)
 
 # %%
 algorithm.get_logs()
