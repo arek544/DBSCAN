@@ -1,12 +1,12 @@
 from turtle import down
 import pandas as pd
 import numpy as np
-from src.metrics import cosine_dissimilarity
+from src.metrics import *
 import logging
 import time 
 from IPython.display import display
 
-def pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k):
+def pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, similarity):
     
     #choosing the next point to check if he is a better neighbor
     dfy = df.iloc[down_row]
@@ -19,21 +19,22 @@ def pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k):
     if not  previous_check:
         return dfx
     if previous_check:
-        dfy['cosine_dissimilarity'] = cosine_dissimilarity(dfy[['x','y']].values, df[df['index']==current_index][['x','y']].values[0])
-        if dfy['cosine_dissimilarity'] < real_max:
-            dfx = dfx[dfx['cosine_dissimilarity'] != real_max]
-            dfx = dfx.append(dfy[['index', 'x','y', 'cosine_dissimilarity', 'r_distnace']])
-            real_max = dfx["cosine_dissimilarity"].max()   
-            return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k)
-    return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k)
+        logging.info(f'similarity_calculation, {current_index},1,')
+        dfy['similarity'] = similarity(dfy[['x','y']].values, df[df['index']==current_index][['x','y']].values[0])
+        if dfy['similarity'] < real_max:
+            dfx = dfx[dfx['similarity'] != real_max]
+            dfx = dfx.append(dfy[['index', 'x','y', 'similarity', 'r_distnace']])
+            real_max = dfx["similarity"].max()   
+            return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, similarity)
+    return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, similarity)
 
 
-def ti_knn(k, df, current_index):
+def ti_knn(k, df, current_index, similarity):
 
     # calculate distance to reference point, [0,1]
     timer_start = time.time()
     df['r_distnace'] = df.apply(
-        lambda row: cosine_dissimilarity(row[['x','y']], [0,1]), 
+        lambda row: similarity(row[['x','y']], [0,1]), 
         axis=1
     ) 
     logging.info(f'dist_to_ref_point_time,,{(time.time() - timer_start) * 1000},')
@@ -41,12 +42,12 @@ def ti_knn(k, df, current_index):
     # calculate pessimistic estimation
     timer_start = time.time()
     current_index_r_distance = df[df['index']==current_index]['r_distnace'].values[0]
-    logging.info(f'pessimistic_estimation_time,{current_index},{(time.time() - timer_start) * 1000},')
     df['pessimistic_estimation'] = abs(current_index_r_distance-df['r_distnace'])
+    logging.info(f'pessimistic_estimation_time,{current_index},{(time.time() - timer_start) * 1000},')
 
     timer_start = time.time()
     df = df.sort_values(by='pessimistic_estimation')
-    logging.info(f'sorting_pe_time,{current_index},{(time.time() - timer_start) * 1000},')
+    logging.info(f'sorting_pessimistic_est_time,{current_index},{(time.time() - timer_start) * 1000},')
     
     df.reset_index(inplace=True, drop=True)
 
@@ -57,48 +58,55 @@ def ti_knn(k, df, current_index):
     idx = df[df['index']==current_index].index.values[0]
     down_row = dfx.iloc[[k-1]].index.values[0] + 1
 
-    #calculation of cosine dissimilarity for candidates
-    dfx['cosine_dissimilarity'] = dfx.apply(
-        lambda row: cosine_dissimilarity(row[['x','y']], df[df['index']==current_index][['x','y']].values[0]
-        ), axis=1) 
+    #calculation of similarity for candidates
+    xy_current_index = df[df['index']==current_index][['x','y']].values[0]
+    distances = []
+    for row in dfx.iterrows():
+        logging.info(f'similarity_calculation, {current_index},1,')
+        dist = similarity(
+            row[1][['x','y']], 
+            xy_current_index
+        )
+        distances.append(dist)
+    dfx['similarity'] = distances
 
-    # choosing the largest real dissimilarity cosine from among the candidates    
-    real_max = dfx["cosine_dissimilarity"].max()
+    # choosing the largest real similarity  from among the candidates    
+    real_max = dfx["similarity"].max()
 
     # looking for better candidates
-    dfx = pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k)
+    dfx = pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, similarity)
     
     # returning the k-nearest neighbors for current_index
     return dfx
 
-def get_tiknn(k, df, all_point_indices):
+def get_tiknn(k, df, similarity):
     point_tiknn = {}
     for current_index in range(0, df.shape[0]):
-        result = ti_knn(k, df, current_index)
+        result = ti_knn(k, df, current_index, similarity)
         point_tiknn_result = result['index'].to_list()
         point_tiknn_result = [int(point) for point in point_tiknn_result]
         point_tiknn[current_index] = point_tiknn_result
         tiknn_indices_str = ';'.join(str(e) for e in point_tiknn_result)
-        logging.info(f'tiknn_neighbors_id,{current_index},,{tiknn_indices_str}')
-        logging.info(f'|tiknn_neighbors|,{current_index}, {len(point_tiknn_result)},')
-        
+        logging.info(f'knn_neighbors_id,{current_index},,{tiknn_indices_str}')
+        logging.info(f'|knn_neighbors|,{current_index}, {len(point_tiknn_result)},')  
     return point_tiknn
 
 
-def get_tirnn(k, df, all_point_indices):
+def get_tirnn(k, df, all_point_indices, similarity):
     point_tirnn = {}
     
     timer_start = time.time()
-    point_tiknn = get_tiknn(k, df, all_point_indices)
+    point_tiknn = get_tiknn(k, df, similarity)
     logging.info(f'tiknn_time,,{(time.time() - timer_start) * 1000},')
     
+    timer_start = time.time()
     for current_index in all_point_indices:
         tirnn = get_pointwise_rnn(point_tiknn, current_index)
         point_tirnn[current_index] = tirnn
         tirnn_indices_str = ';'.join(str(e) for e in tirnn)
-        logging.info(f'tirnn_neighbors_id,{current_index},,{tirnn_indices_str}')
-        logging.info(f'|tirnn_neighbors|,{current_index}, {len(tirnn)},')
-        
+        logging.info(f'rnn_neighbors_id,{current_index},,{tirnn_indices_str}')
+        logging.info(f'|rnn_neighbors|,{current_index}, {len(tirnn)},')
+    logging.info(f'rnn_time,{current_index},{(time.time() - timer_start) * 1000},')    
     return point_tirnn, point_tiknn
 
 
@@ -136,6 +144,7 @@ def get_knn(current_index, neighbor_indices, k, similarity, X):
 def ti_dbscanrn(X, k, similarity):
     
     logging.info(f'start log,,,')
+
     # inidces of all points
     all_point_indices = list(range(len(X))) 
     
@@ -143,7 +152,7 @@ def ti_dbscanrn(X, k, similarity):
     "index": all_point_indices,
     "x": X[all_point_indices][:,0],
     "y": X[all_point_indices][:,1],
-    'cosine_dissimilarity': np.nan
+    'similarity': np.nan
     })
     
     # each data point can be in one of 3 stages
@@ -158,7 +167,7 @@ def ti_dbscanrn(X, k, similarity):
     cluster_id = 1
     
     timer_start = time.time()
-    point_rnn, point_knn = get_tirnn(k, df, all_point_indices) # calculate RNN_k for all points
+    point_rnn, point_knn = get_tirnn(k, df, all_point_indices, similarity) # calculate RNN_k for all points
     logging.info(f'tirnn_time,,{(time.time() - timer_start) * 1000},')
     
     # search for clusters
@@ -187,6 +196,7 @@ def ti_dbscanrn(X, k, similarity):
         knn = get_knn(not_clustered_ids, clustered_ids, 1, similarity, X)
         cluster[not_clustered_ids] = cluster[knn[0]]
         state[not_clustered_ids] = CLUSTERED
+
     logging.info(f'stop log,,,')
     return cluster, state
 
