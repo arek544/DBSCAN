@@ -4,7 +4,7 @@ from sklearn import metrics
 from sklearn.metrics import davies_bouldin_score
 from sklearn import preprocessing
 import numpy as np
-# from sklearn.metrics import pairwise_distance
+import math
 
 
 def cluster_encoder(cluster):
@@ -27,13 +27,17 @@ def tp(y_true, y_pred):
     
 def tn(y_true, y_pred):
     return sum(y_true != y_pred)
-    
 
+def rand_score(y_true, y_pred):
+    n = len(y_true)
+    return (tp(y_true, y_pred) + tn(y_true, y_pred))/math.comb(n,2)
+
+    
 def evaluate(y_pred, y_true, data):
     # y_pred = cluster_encoder(y_pred)
     return {
         "purity": purity(y_true, y_pred),
-        "adjusted_rand_score": adjusted_rand_score(y_true, y_pred),
+        "rand_score": rand_score(y_true, y_pred),
         "davies_bouldin_score": davies_bouldin_score(data, y_pred),
         "silhouette_score_euclidean": metrics.silhouette_score(data, y_pred, metric = 'euclidean'),
         "silhouette_score_cosine": metrics.silhouette_score(data, y_pred, metric = 'cosine'),
