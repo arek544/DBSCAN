@@ -17,5 +17,5 @@ class Dataset:
     
     def load_data(self, path):
         header = ["x", "y", "real_cluster"]
-        return pd.read_csv(path, sep='\t', names=header)
+        return pd.read_csv(path, sep=',', names=header)
 
