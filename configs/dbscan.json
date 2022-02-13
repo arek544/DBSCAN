@@ -1,0 +1,54 @@
+{
+    "lecture_dataset": {
+        "disable": false,
+        "name": "lecture_dataset",
+        "n_dimentions": 2,
+        "n_rows": 12,
+        "path": "../data/lecture_dataset.txt",
+        "params": {
+            "epsilon": 2,
+            "minPts": 4
+        },
+        "out_path": "../out/dbscan_cpp_lecture_dataset.csv",
+        "log_out": "../out/LOG_dbscan_cpp_lecture_dataset_D2_R12_m4_e2_euclidean_distance.log"
+    },
+    "cluto-t7-10k": {
+        "disable": false,
+        "name": "cluto-t7-10k",
+        "n_dimentions": 2,
+        "n_rows": 10000,
+        "path": "../data/cluto-t7-10k.txt",
+        "params": {
+            "epsilon": 2,
+            "minPts": 4
+        },
+        "out_path": "../out/dbscan_cpp_lecture_dataset.csv",
+        "log_out": "../out/LOG_dbscan_cpp_lecture_dataset_D2_R12_m4_e2_euclidean_distance.log"
+    },
+    "complex9": {
+        "disable": false,
+        "name": "complex9",
+        "n_dimentions": 2,
+        "n_rows": 10,
+        "path": "../data/complex9.txt",
+        "params": {
+            "epsilon": 2,
+            "minPts": 4
+        },
+        "out_path": "../out/dbscan_cpp_lecture_dataset.csv",
+        "log_out": "../out/LOG_dbscan_cpp_lecture_dataset_D2_R12_m4_e2_euclidean_distance.log"
+    },
+    "letter": {
+        "disable": false,
+        "name": "letter",
+        "n_dimentions": 2,
+        "n_rows": 10,
+        "path": "../data/letter.txt",
+        "params": {
+            "epsilon": 2,
+            "minPts": 4
+        },
+        "out_path": "../out/dbscan_cpp_lecture_dataset.csv",
+        "log_out": "../out/LOG_dbscan_cpp_lecture_dataset_D2_R12_m4_e2_euclidean_distance.log"
+    }
+}
