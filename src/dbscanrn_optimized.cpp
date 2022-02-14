@@ -124,7 +124,7 @@ int main() {
             // save output
             ofstream out_file;
             out_file.open(out_path);
-            dump_csv(out_file, stack(xtuple(CLUSTER, STATE), 1));
+            dump_csv(out_file, xt::stack(xtuple(CLUSTER, STATE), 1));
             out_file.close();
 
             elapsed = (chrono::high_resolution_clock::now() - start);
