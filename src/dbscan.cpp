@@ -36,7 +36,10 @@
 #include <nlohmann/json.hpp>
 #include <chrono>
 #include <list>
+#include <string>
+#include <regex>
 
+    
 using namespace xt;
 using namespace std;
 using namespace std::chrono;
@@ -80,6 +83,9 @@ int main() {
             auto out_path = conf["out_path"].get<std::string>();
             auto log_out = conf["log_out"].get<std::string>();
             
+            out_path = regex_replace(out_path, regex("algorithm"), "dbscan_cpp");
+            log_out = regex_replace(log_out, regex("algorithm"), "dbscan_cpp");
+            
             // load data
             ofstream outfile;
             outfile.open(log_out);
@@ -110,7 +116,7 @@ int main() {
             // save output
             ofstream out_file;
             out_file.open(out_path);
-            dump_csv(out_file, stack(xtuple(CLUSTER, STATE), 1));
+            dump_csv(out_file, xt::stack(xtuple(CLUSTER, STATE), 1));
             out_file.close();
 
             elapsed = (chrono::high_resolution_clock::now() - start);

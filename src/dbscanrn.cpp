@@ -37,6 +37,9 @@
 #include <chrono>
 #include <list>
 #include <xtensor/xsort.hpp>
+#include <string>
+#include <regex>
+
 
 using namespace xt;
 using namespace std;
@@ -87,6 +90,9 @@ int main() {
             auto k = conf["params"]["k"].get<int>();
             auto out_path = conf["out_path"].get<std::string>();
             auto log_out = conf["log_out"].get<std::string>();
+            
+            out_path = regex_replace(out_path, regex("algorithm"), "dbscanrn_cpp");
+            log_out = regex_replace(log_out, regex("algorithm"), "dbscanrn_cpp");
             
             // load data
             ofstream outfile;
