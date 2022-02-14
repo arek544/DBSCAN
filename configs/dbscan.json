@@ -7,7 +7,8 @@
         "path": "../data/lecture_dataset.txt",
         "params": {
             "epsilon": 2,
-            "minPts": 4
+            "minPts": 4,
+            "k": 3
         },
         "out_path": "../out/dbscan_cpp_lecture_dataset.csv",
         "log_out": "../out/LOG_dbscan_cpp_lecture_dataset_D2_R12_m4_e2_euclidean_distance.log"
@@ -17,38 +18,41 @@
         "name": "cluto-t7-10k",
         "n_dimentions": 2,
         "n_rows": 10000,
-        "path": "../data/cluto-t7-10k.txt",
+        "path": "../data/cluto-t7-10k_sample.txt",
         "params": {
             "epsilon": 2,
-            "minPts": 4
+            "minPts": 4,
+            "k": 3
         },
-        "out_path": "../out/dbscan_cpp_lecture_dataset.csv",
-        "log_out": "../out/LOG_dbscan_cpp_lecture_dataset_D2_R12_m4_e2_euclidean_distance.log"
+        "out_path": "out/dbscan_cpp_cluto-t7-10k.csv",
+        "log_out": "out/LOG_dbscan_cpp_cluto-t7-10k_D2_R12_m4_e2_euclidean_distance.log"
     },
     "complex9": {
         "disable": false,
         "name": "complex9",
         "n_dimentions": 2,
         "n_rows": 10,
-        "path": "../data/complex9.txt",
+        "path": "../data/complex9_sample.txt",
         "params": {
             "epsilon": 2,
-            "minPts": 4
+            "minPts": 4,
+            "k": 3
         },
-        "out_path": "../out/dbscan_cpp_lecture_dataset.csv",
-        "log_out": "../out/LOG_dbscan_cpp_lecture_dataset_D2_R12_m4_e2_euclidean_distance.log"
+        "out_path": "out/dbscan_cpp_complex9.csv",
+        "log_out": "out/LOG_dbscan_cpp_complex9_D2_R12_m4_e2_euclidean_distance.log"
     },
     "letter": {
         "disable": false,
         "name": "letter",
         "n_dimentions": 2,
         "n_rows": 10,
-        "path": "../data/letter.txt",
+        "path": "../data/letter_sample.txt",
         "params": {
             "epsilon": 2,
-            "minPts": 4
+            "minPts": 4,
+            "k": 3
         },
-        "out_path": "../out/dbscan_cpp_lecture_dataset.csv",
-        "log_out": "../out/LOG_dbscan_cpp_lecture_dataset_D2_R12_m4_e2_euclidean_distance.log"
+        "out_path": "../out/dbscan_cpp_letter.csv",
+        "log_out": "../out/LOG_dbscan_cpp_letter_D2_R12_m4_e2_euclidean_distance.log"
     }
 }
