@@ -67,7 +67,7 @@ int main() {
     string log_out;
     
     // read configs
-    std::ifstream file("../configs/dbscan.json");
+    std::ifstream file("configs/dbscan.json");
     json config = json::parse(file);
     
     for (auto conf : config)
@@ -97,7 +97,7 @@ int main() {
                 "," << elapsed.count() << "," << endl;
 
             data.reshape(data.shape());
-            xarray<double> X = view(data, all(), range(0, 2));
+            xarray<double> X = view(data, all(), range(0, -1));
 
             // init
             void dbscan(const xarray<float>& X, float epsilon, int minPts, std::ofstream& outfile);
