@@ -4,6 +4,22 @@ import time
 import os
 import pandas as pd
 
+
+def setup_logger(name, log_file, level=logging.INFO):
+    """To setup as many loggers as you want"""
+    formatter = logging.Formatter(fmt='%(msecs)06f,%(message)s')
+    handler = logging.FileHandler(log_file)        
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    logger.addHandler(handler)
+
+    return logger
+
+logger = setup_logger('root', 'out.log')
+
+
 def get_knn(current_index, neighbor_indices, k, similarity, X):
     '''
     current_index - index of given point,
@@ -18,7 +34,7 @@ def get_knn(current_index, neighbor_indices, k, similarity, X):
     # For each neighbor measure similarity to current point
     neighbor_similaritys = []
     for neighbor_index in neighbor_indices:
-        logging.info(f'similarity_calculation, {current_index}, 1,')
+        logger.info(f'similarity_calculation, {current_index}, 1,')
         similarity_measure = similarity(X[neighbor_index], X[current_index])
         neighbor_similaritys.append(similarity_measure) 
     
@@ -28,8 +44,8 @@ def get_knn(current_index, neighbor_indices, k, similarity, X):
     neighbor_indices = neighbor_indices[sort_indices][:k].tolist()
     
     neighbor_indices_str = ';'.join(str(e) for e in neighbor_indices)
-    logging.info(f'knn_neighbors_id,{current_index},,{neighbor_indices_str}')
-    logging.info(f'|knn_neighbors|,{current_index}, {len(neighbor_indices)},')
+    logger.info(f'knn_neighbors_id,{current_index},,{neighbor_indices_str}')
+    logger.info(f'|knn_neighbors|,{current_index}, {len(neighbor_indices)},')
     
     return neighbor_indices
 
@@ -41,8 +57,8 @@ def get_pointwise_rnn(point_knn, current_index):
             rnn.append(neighbor)
     
     rnn_indices_str = ';'.join(str(e) for e in rnn)
-    logging.info(f'rnn_neighbors_id,{current_index},,{rnn_indices_str}')
-    logging.info(f'|rnn_neighbors|,{current_index}, {len(rnn)},')
+    logger.info(f'rnn_neighbors_id,{current_index},,{rnn_indices_str}')
+    logger.info(f'|rnn_neighbors|,{current_index}, {len(rnn)},')
     return rnn
     
 def get_rnn(point_indices, k, similarity, X):
@@ -59,19 +75,19 @@ def get_rnn(point_indices, k, similarity, X):
     for current_index in point_indices:
         knn = get_knn(current_index, point_indices[:], k, similarity, X)
         point_knn[current_index] = knn
-    logging.info(f'knn_time,{current_index},{(time.time() - timer_start) * 1000},')
+    logger.info(f'knn_time,{current_index},{(time.time() - timer_start) * 1000},')
     
     timer_start = time.time()
     for current_index in point_indices:
         rnn = get_pointwise_rnn(point_knn, current_index)
         point_rnn[current_index] = rnn
-    logging.info(f'rnn_time,{current_index},{(time.time() - timer_start) * 1000},')
+    logger.info(f'rnn_time,{current_index},{(time.time() - timer_start) * 1000},')
     
     return point_rnn, point_knn
 
 def dbscanrn(X, k, similarity):
     
-    logging.info(f'start log,,,')
+    logger.info(f'start log,,,')
     
     # each data point can be in one of 3 stages
     NOT_VISITED = -1 # not visited point
@@ -113,33 +129,29 @@ def dbscanrn(X, k, similarity):
         knn = get_knn(not_clustered_ids, clustered_ids, 1, similarity, X)
         cluster[not_clustered_ids] = cluster[knn[0]]
         state[not_clustered_ids] = CLUSTERED
-    logging.info(f'stop log,,,')
+    logger.info(f'stop log,,,')
     return cluster, state
+
 
 
 class DBSCANRN:
 
-    def __init__(self, k, similarity):
+    def __init__(self, k, similarity, **kwargs):
         self.k = k
         self.similarity = similarity
         self.log_output = 'out.log'
         self.name = 'dbscanrn'
+        
     
     def fit_transform(self, X):
-
-        # Logger setup
-        logging.basicConfig(
-            level=logging.INFO, 
-            filename=self.log_output, 
-            filemode='w+',
-            format='%(msecs)06f,%(message)s',
-            datefmt='%H:%M:%S'
-        )
+        
+        logger = logging.getLogger('root')
+        handler = logging.FileHandler(self.log_output)
+        logger.addHandler(handler)
         
         self.X = X
         result = dbscanrn(self.X, self.k, self.similarity)
         self.y_pred, self.state = result
-        logging.shutdown()
         return self.y_pred
     
     def get_logs(self):

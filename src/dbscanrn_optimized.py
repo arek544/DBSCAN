@@ -5,6 +5,22 @@ from src.metrics import *
 import logging
 import time 
 from IPython.display import display
+import logging
+
+
+def setup_logger(name, log_file, level=logging.INFO):
+    """To setup as many loggers as you want"""
+    formatter = logging.Formatter(fmt='%(msecs)06f,%(message)s')
+    handler = logging.FileHandler(log_file)        
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    logger.addHandler(handler)
+
+    return logger
+
+logger = setup_logger('root', 'out.log')
 
 def pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, similarity):
     
@@ -142,7 +158,6 @@ def get_knn(current_index, neighbor_indices, k, similarity, X):
 
 
 def ti_dbscanrn(X, k, similarity):
-    
     logging.info(f'start log,,,')
 
     # inidces of all points
@@ -203,7 +218,7 @@ def ti_dbscanrn(X, k, similarity):
 
 class DBSCANRN_opt:
 
-    def __init__(self, k, similarity):
+    def __init__(self, k, similarity, **kwargs):
         self.k = k
         self.similarity = similarity
         self.log_output = 'out.log'
@@ -211,19 +226,14 @@ class DBSCANRN_opt:
     
     def fit_transform(self, X):
 
-        # Logger setup
-        logging.basicConfig(
-            level=logging.INFO, 
-            filename=self.log_output, 
-            filemode='w+',
-            format='%(msecs)06f,%(message)s',
-            datefmt='%H:%M:%S'
-        )
+        logger = logging.getLogger('root')
+        handler = logging.FileHandler(self.log_output)
+        logger.addHandler(handler)
         
         self.X = X
         result = ti_dbscanrn(self.X, self.k, self.similarity)
         self.y_pred, self.state = result
-        logging.shutdown()
+        # logging.shutdown()
         return self.y_pred
     
     def get_logs(self):
@@ -231,5 +241,5 @@ class DBSCANRN_opt:
             self.log_output,
             names=['time [ms]', 'operation', 'point_id', 'value', 'string']
         )
-        logs['time [ms]'] -= logs['time [ms]'].min()
+        # logs['time [ms]'] -= logs['time [ms]'].min()
         return logs

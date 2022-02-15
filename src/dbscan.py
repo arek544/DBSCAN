@@ -4,6 +4,21 @@ import time
 import os
 import pandas as pd
 
+
+def setup_logger(name, log_file, level=logging.INFO):
+    """To setup as many loggers as you want"""
+    formatter = logging.Formatter(fmt='%(msecs)06f,%(message)s')
+    handler = logging.FileHandler(log_file)        
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    logger.addHandler(handler)
+
+    return logger
+
+logger = setup_logger('root', 'out.log')
+
 def get_neighbors(X, current_index, epsilon, similarity):
     '''
     X - dataset with point coordinates,
@@ -17,7 +32,7 @@ def get_neighbors(X, current_index, epsilon, similarity):
             neighbor_indices.append(neighbor_index)
     return neighbor_indices
 
-def dbscan(X, epsilon, minPts, similarity, logger):
+def dbscan(X, epsilon, minPts, similarity):
     '''
     X - dataset with point coordinates,
     epsilon - max similarity or distance to given point,
@@ -94,20 +109,13 @@ class DBSCAN:
     
     def fit_transform(self, X):
 
-        # Logger setup
-        # logging.basicConfig(
-        #     level=logging.INFO, 
-        #     filename=self.log_output, 
-        #     filemode='w+',
-        #     format='%(msecs)06f,%(message)s',
-        #     datefmt='%H:%M:%S'
-        # )
-        logger = setup_logger(self.name, self.log_output)
+        logger = logging.getLogger('root')
+        handler = logging.FileHandler(self.log_output)
+        logger.addHandler(handler)
         
         self.X = X
-        result = dbscan(self.X, self.epsilon, self.minPts, self.distance, logger)
+        result = dbscan(self.X, self.epsilon, self.minPts, self.distance)
         self.y_pred, self.state = result
-        # logging.shutdown()
         return self.y_pred
     
     def get_logs(self):
