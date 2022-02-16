@@ -1,5 +1,5 @@
-from sklearn.preprocessing import Normalizer
 import time
+import numpy as np
 
 class Norm:
     
@@ -8,6 +8,6 @@ class Norm:
         
     def run(self, X):
         timer_start = time.time()
-        X = Normalizer().fit_transform(X)
+        X = X/np.linalg.norm(X, axis =1, keepdims = True)
         self.runtime = (time.time() - timer_start) * 1000
         return X

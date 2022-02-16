@@ -7,6 +7,8 @@ import time
 from IPython.display import display
 import logging
 
+def epsilon_prim(epsilon):
+    return np.sqrt(2-2*epsilon)
 
 def setup_logger(name, log_file, level=logging.INFO):
     """To setup as many loggers as you want"""
@@ -40,17 +42,18 @@ def pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, s
         if dfy['similarity'] < real_max:
             dfx = dfx[dfx['similarity'] != real_max]
             dfx = dfx.append(dfy[['index', 'x','y', 'similarity', 'r_distnace']])
-            real_max = dfx["similarity"].max()   
+            real_max = dfx["similarity"].max()
+            real_max = epsilon_prim(real_max)
             return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, similarity)
     return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, similarity)
 
 
-def ti_knn(k, df, current_index, similarity):
+def ti_knn(k, df, current_index, similarity, ref_point=[0,1]):
 
     # calculate distance to reference point, [0,1]
     timer_start = time.time()
     df['r_distnace'] = df.apply(
-        lambda row: similarity(row[['x','y']], [0,1]), 
+        lambda row: similarity(row[['x','y']], ref_point), 
         axis=1
     ) 
     logging.info(f'dist_to_ref_point_time,,{(time.time() - timer_start) * 1000},')
@@ -88,7 +91,8 @@ def ti_knn(k, df, current_index, similarity):
 
     # choosing the largest real similarity  from among the candidates    
     real_max = dfx["similarity"].max()
-
+    real_max = epsilon_prim(real_max)
+    
     # looking for better candidates
     dfx = pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, similarity)
     
@@ -98,7 +102,7 @@ def ti_knn(k, df, current_index, similarity):
 def get_tiknn(k, df, similarity):
     point_tiknn = {}
     for current_index in range(0, df.shape[0]):
-        result = ti_knn(k, df, current_index, similarity)
+        result = ti_knn(k, df, current_index, similarity, ref_point)
         point_tiknn_result = result['index'].to_list()
         point_tiknn_result = [int(point) for point in point_tiknn_result]
         point_tiknn[current_index] = point_tiknn_result
@@ -157,7 +161,7 @@ def get_knn(current_index, neighbor_indices, k, similarity, X):
     return neighbor_indices[sort_indices][:k].tolist()
 
 
-def ti_dbscanrn(X, k, similarity):
+def ti_dbscanrn(X, k, similarity, ref_point):
     logging.info(f'start log,,,')
 
     # inidces of all points
@@ -218,11 +222,12 @@ def ti_dbscanrn(X, k, similarity):
 
 class DBSCANRN_opt:
 
-    def __init__(self, k, similarity, **kwargs):
+    def __init__(self, k, similarity,ref_point, **kwargs):
         self.k = k
         self.similarity = similarity
         self.log_output = 'out.log'
         self.name = 'dbscanrn_opt'
+        self.ref_point = ref_point
     
     def fit_transform(self, X):
 
@@ -231,7 +236,7 @@ class DBSCANRN_opt:
         logger.addHandler(handler)
         
         self.X = X
-        result = ti_dbscanrn(self.X, self.k, self.similarity)
+        result = ti_dbscanrn(self.X, self.k, self.similarity, self.ref_point)
         self.y_pred, self.state = result
         # logging.shutdown()
         return self.y_pred
