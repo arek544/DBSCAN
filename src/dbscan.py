@@ -3,6 +3,8 @@ import logging
 import time 
 import os
 import pandas as pd
+from src.datasets import Dataset
+import json
 
 
 def setup_logger(name, log_file, level=logging.INFO):
@@ -39,7 +41,6 @@ def dbscan(X, epsilon, minPts, similarity):
     minPts - minimum number of points that create cluster,
     similarity - metric of similarity or distance bewteen two points
     '''
-    logger.info(f'start log,,,')
     
     # each data point can be in one of 3 stages
     NOT_VISITED = -1 # not visited point
@@ -106,16 +107,37 @@ class DBSCAN:
         self.distance = similarity
         self.log_output = 'out.log'
         self.name = 'dbscan'
+        
+        config_path = './configs/dbscan.json'
+        f = open(config_path)
+        self.config = json.load(f)
     
-    def fit_transform(self, X):
-
+    def run(self, dataset_name):
+            
         logger = logging.getLogger('root')
+        formatter = logging.Formatter(fmt='%(msecs)06f,%(message)s')    
         handler = logging.FileHandler(self.log_output)
-        logger.addHandler(handler)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)         
+        
+        logger.info(f'start log,,,')
+        
+        timer1 = time.time() 
+        dataset = Dataset(self.config[dataset_name]['path'])
+        X, y = dataset.X, dataset.y
+        logger.info(f'reading_data,,{(time.time() - timer1)*1000},')
         
         self.X = X
         result = dbscan(self.X, self.epsilon, self.minPts, self.distance)
         self.y_pred, self.state = result
+        
+        timer1 = time.time() 
+        pd.DataFrame({
+            'cluster': self.y_pred,
+            'state': self.state
+        }).to_csv(f"out/{self.name}_{dataset_name}.csv", header=None)
+        logger.info(f'writing_data,,{(time.time() - timer1)*1000},')
+        
         return self.y_pred
     
     def get_logs(self):
@@ -125,3 +147,5 @@ class DBSCAN:
         )
         # logs['time [ms]'] -= logs['time [ms]'].min()
         return logs
+    
+

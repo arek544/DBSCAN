@@ -23,16 +23,15 @@ new_config = {}
 for dataset_name in config.keys():
     conf = config[dataset_name]
     if not conf['disable']:
-        dataset = Dataset(conf['path'])
-        X, y = dataset.X, dataset.y
 
+        dataset = Dataset(conf['path'])
         #################### Clusterization ###########################
         timer_start = time.time()
-        params = {
-            'similarity': euclidean_distance
-        }
-        params.update(conf['params'])
-
+        
+        
+        params = {'similarity': euclidean_distance}
+        params.update(conf['params_dbscan'])
+        
         algorithm = DBSCAN(**params)
 
         name = get_name(
@@ -42,9 +41,9 @@ for dataset_name in config.keys():
             n_rows=dataset.n_rows,
             **params
         )
-        print(name)
+        algorithm.name = name
         algorithm.log_output = f'out/LOG_{name}.log'
-        algorithm.fit_transform(X)
+        algorithm.run(conf['name'])
         
         display_points(algorithm.X, algorithm.y_pred, numerate=False)
         print("\n")
