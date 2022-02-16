@@ -6,9 +6,10 @@ import pandas as pd
 from src.datasets import Dataset
 import json
 import math
+from src.metrics import *
 
 def epsilon_prim(epsilon):
-    return math.sqrt(2-2*epsilon)
+    return math.sqrt(2-2*epsilon) if epsilon < 1 else 0
 
 def setup_logger(name, log_file, level=logging.INFO):
     """To setup as many loggers as you want"""
@@ -104,7 +105,7 @@ def setup_logger(name, log_file, level=logging.INFO):
 
 class DBSCAN:
 
-    def __init__(self, epsilon, minPts, similarity, **kwargs):
+    def __init__(self, epsilon, minPts, similarity=euclidean_distance, **kwargs):
         self.epsilon = epsilon_prim(epsilon)
         self.minPts = minPts
         self.distance = similarity
@@ -126,7 +127,7 @@ class DBSCAN:
         logger.info(f'start log,,,')
         
         timer1 = time.time() 
-        dataset = Dataset(self.config[dataset_name]['path'])
+        dataset = Dataset(self.config[dataset_name]['path'], False)
         X, y = dataset.X, dataset.y
         logger.info(f'reading_data,,{(time.time() - timer1)*1000},')
         

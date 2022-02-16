@@ -5,7 +5,7 @@ from pathlib import Path
 
 class Dataset:
     
-    def __init__(self, path):
+    def __init__(self, path, print_info=True):
         timer_start = time.time()
         self.df = self.load_data(path)
         self.X = self.df[["x", "y"]].values
@@ -15,10 +15,11 @@ class Dataset:
         self.n_rows = self.X.shape[0]
         self.runtime = (time.time() - timer_start) * 1000
         
-        print('Dataset name: ', self.name)
-        print('n_dimentions: ', self.n_dimentions)
-        print('n_rows', self.n_rows)
-        print('runtime [ms]: ', self.runtime)
+        if print_info:
+            print('\nDataset name: ', self.name)
+            print('n_dimentions: ', self.n_dimentions)
+            print('n_rows:', self.n_rows)
+            print('runtime [ms]: ', self.runtime)
     
     def load_data(self, path):
         header = ["x", "y", "real_cluster"]

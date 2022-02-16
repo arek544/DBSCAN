@@ -1,8 +1,10 @@
-import numpy as np
 import logging
 import time 
 import os
 import pandas as pd
+from src.metrics import *
+from src.datasets import Dataset
+import json
 
 
 def setup_logger(name, log_file, level=logging.INFO):
@@ -136,22 +138,42 @@ def dbscanrn(X, k, similarity):
 
 class DBSCANRN:
 
-    def __init__(self, k, similarity, **kwargs):
+    def __init__(self, k, similarity=cosine_dissimilarity, **kwargs):
         self.k = k
         self.similarity = similarity
         self.log_output = 'out.log'
         self.name = 'dbscanrn'
-        
-    
-    def fit_transform(self, X):
+
+        config_path = './configs/dbscan.json'
+        f = open(config_path)
+        self.config = json.load(f)
+
+    def run(self, dataset_name):
         
         logger = logging.getLogger('root')
+        formatter = logging.Formatter(fmt='%(msecs)06f,%(message)s')    
         handler = logging.FileHandler(self.log_output)
-        logger.addHandler(handler)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)         
+        
+        logger.info(f'start log,,,')
+        
+        timer1 = time.time() 
+        dataset = Dataset(self.config[dataset_name]['path'], False)
+        X, y = dataset.X, dataset.y
+        logger.info(f'reading_data,,{(time.time() - timer1)*1000},')
         
         self.X = X
         result = dbscanrn(self.X, self.k, self.similarity)
         self.y_pred, self.state = result
+        
+        timer1 = time.time() 
+        pd.DataFrame({
+            'cluster': self.y_pred,
+            'state': self.state
+        }).to_csv(f"out/{self.name}_{dataset_name}.csv", header=None)
+        logger.info(f'writing_data,,{(time.time() - timer1)*1000},')
+        
         return self.y_pred
     
     def get_logs(self):
@@ -159,5 +181,5 @@ class DBSCANRN:
             self.log_output,
             names=['time [ms]', 'operation', 'point_id', 'value', 'string']
         )
-        logs['time [ms]'] -= logs['time [ms]'].min()
+        # logs['time [ms]'] -= logs['time [ms]'].min()
         return logs

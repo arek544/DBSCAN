@@ -17,14 +17,15 @@ for out_path, log_path in zip(glob.glob('out/*.csv'), glob.glob('out/*.log')):
     print(out_path)
     print('\n')
     
-    # load out
-    df = pd.read_csv(out_path, header=None)
-    y_pred, state = df[0], df[1]
     name = Path(log_path).stem.replace('LOG_','')
-    print(name)
-    
+
     # lad dataset
     if len([dataset for dataset in list(config.keys()) if dataset in name]) > 0:
+
+        # load out
+        df = pd.read_csv(out_path, header=None)
+        y_pred, state = df[0], df[1]
+
         dataset_name = [dataset for dataset in list(config.keys()) if dataset in name][0]
 
         dataset = Dataset(f'data/{dataset_name}.txt') 
@@ -63,7 +64,7 @@ for out_path, log_path in zip(glob.glob('out/*.csv'), glob.glob('out/*.log')):
             'epsilon': params['epsilon'] if 'epsilon' in params else '',
             'minPts': params['minPts'] if 'minPts' in params else '',
             'k':  params['k'] if 'k' in params else '',
-            'similarity': params['similarity'],
+            # 'similarity': params['similarity'],
             'values of dimensions of a reference point': '[0,1]',
             'reading the input file [ms]': logs.loc[logs['operation'] == 'reading_data', 'value'].values[0],
             'normalization of vectors [ms]': "",
@@ -92,7 +93,7 @@ for out_path, log_path in zip(glob.glob('out/*.csv'), glob.glob('out/*.log')):
             'RAND': score['rand_score'],
             'Purity': score['purity'],
             'Silhouette coefficient': score['silhouette_score_euclidean'],
-            'Davies Bouldin': score['davies_bouldin_score']
+            # 'Davies Bouldin': score['davies_bouldin_score']
         }, index=['values']).T
         
         stat.to_csv(f'./out/STAT_{name}.csv', index=False)
@@ -151,3 +152,10 @@ for out_path, log_path in zip(glob.glob('out/*.csv'), glob.glob('out/*.log')):
 
         debug = debug1.merge(debug2, on='point_id').merge(debug3, on='point_id').merge(debug4, on='point_id')
         debug.to_csv(f'./out/DEBUG_{name}.csv', index=False)
+
+        # Plots
+        fig, ax = plt.subplots( nrows=1, ncols=1 )
+        ax.scatter(X[:,0], X[:,1], c=y_pred)    
+        ax.set_title(name)
+        fig.savefig(f"./img/{name}")
+        plt.close(fig)  

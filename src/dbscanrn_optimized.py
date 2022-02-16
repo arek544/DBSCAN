@@ -6,9 +6,31 @@ import logging
 import time 
 from IPython.display import display
 import logging
+from src.metrics import *
+from src.datasets import Dataset
+import math
+import json
+import warnings
+
+
+warnings.filterwarnings('ignore')
+
+def setup_logger(name, log_file, level=logging.INFO):
+    """To setup as many loggers as you want"""
+    formatter = logging.Formatter(fmt='%(msecs)06f,%(message)s')
+    handler = logging.FileHandler(log_file)        
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    logger.addHandler(handler)
+
+    return logger
+
+logger = setup_logger('root', 'out.log')
 
 def epsilon_prim(epsilon):
-    return np.sqrt(2-2*epsilon)
+    return math.sqrt(2-2*epsilon) if epsilon < 1 else 0
 
 def setup_logger(name, log_file, level=logging.INFO):
     """To setup as many loggers as you want"""
@@ -102,7 +124,7 @@ def ti_knn(k, df, current_index, similarity, ref_point=[0,1]):
 def get_tiknn(k, df, similarity):
     point_tiknn = {}
     for current_index in range(0, df.shape[0]):
-        result = ti_knn(k, df, current_index, similarity, ref_point)
+        result = ti_knn(k, df, current_index, similarity)
         point_tiknn_result = result['index'].to_list()
         point_tiknn_result = [int(point) for point in point_tiknn_result]
         point_tiknn[current_index] = point_tiknn_result
@@ -222,23 +244,43 @@ def ti_dbscanrn(X, k, similarity, ref_point):
 
 class DBSCANRN_opt:
 
-    def __init__(self, k, similarity,ref_point, **kwargs):
+    def __init__(self, k, similarity=euclidean_distance, ref_point=[0,1], **kwargs):
         self.k = k
         self.similarity = similarity
         self.log_output = 'out.log'
         self.name = 'dbscanrn_opt'
         self.ref_point = ref_point
+
+        config_path = './configs/dbscan.json'
+        f = open(config_path)
+        self.config = json.load(f)
     
-    def fit_transform(self, X):
+    def run(self, dataset_name):
 
         logger = logging.getLogger('root')
+        formatter = logging.Formatter(fmt='%(msecs)06f,%(message)s')    
         handler = logging.FileHandler(self.log_output)
-        logger.addHandler(handler)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)         
+        
+        logger.info(f'start log,,,')
+        
+        timer1 = time.time() 
+        dataset = Dataset(self.config[dataset_name]['path'], False)
+        X, y = dataset.X, dataset.y
+        logger.info(f'reading_data,,{(time.time() - timer1)*1000},')
         
         self.X = X
         result = ti_dbscanrn(self.X, self.k, self.similarity, self.ref_point)
         self.y_pred, self.state = result
-        # logging.shutdown()
+
+        timer1 = time.time() 
+        pd.DataFrame({
+            'cluster': self.y_pred,
+            'state': self.state
+        }).to_csv(f"out/{self.name}_{dataset_name}.csv", header=None)
+        logger.info(f'writing_data,,{(time.time() - timer1)*1000},')
+        
         return self.y_pred
     
     def get_logs(self):
