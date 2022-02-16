@@ -3,7 +3,10 @@ import logging
 import time 
 import os
 import pandas as pd
+import math
 
+def epsilon_prim(epsilon):
+    return math.sqrt(2-2*epsilon)
 
 def setup_logger(name, log_file, level=logging.INFO):
     """To setup as many loggers as you want"""
@@ -101,7 +104,7 @@ def setup_logger(name, log_file, level=logging.INFO):
 class DBSCAN:
 
     def __init__(self, epsilon, minPts, similarity, **kwargs):
-        self.epsilon = epsilon
+        self.epsilon = epsilon_prim(epsilon)
         self.minPts = minPts
         self.distance = similarity
         self.log_output = 'out.log'

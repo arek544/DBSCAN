@@ -25,7 +25,9 @@ for dataset_name in config.keys():
     if not conf['disable']:
         dataset = Dataset(conf['path'])
         X, y = dataset.X, dataset.y
-
+        normalization = Norm()
+        X = normalization.run(X)
+        
         #################### Clusterization ###########################
         timer_start = time.time()
         params = {
