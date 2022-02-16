@@ -1,16 +1,11 @@
 {
     "cluto-t7-10k_sample": {
         "disable": false,
-        "log_out": "out/LOG_algorithm_cluto-t7-10k_sample_D2_R200_m4_e0.95_k3_euclidean_distance.log",
+        "log_out": "out/LOG_algorithm_cluto-t7-10k_sample_D2_R200_m4_e2_euclidean_distance.log",
         "n_dimentions": 2,
         "n_rows": 10000,
         "name": "cluto-t7-10k_sample",
         "out_path": "out/algorithm_cluto-t7-10k_sample.csv",
-        "params": {
-            "epsilon": 0.95,
-            "k": 3,
-            "minPts": 4
-        },
         "params_dbscan": {
             "epsilon": 2,
             "minPts": 4
@@ -25,7 +20,7 @@
     },
     "complex9_sample": {
         "disable": false,
-        "log_out": "out/LOG_algorithm_complex9_sample_D2_R200_m4_e0.95_k3_euclidean_distance.log",
+        "log_out": "out/LOG_algorithm_complex9_sample_D2_R200_m4_e2_euclidean_distance.log",
         "n_dimentions": 2,
         "n_rows": 10,
         "name": "complex9_sample",
@@ -49,16 +44,11 @@
     },
     "lecture_dataset": {
         "disable": false,
-        "log_out": "out/LOG_algorithm_lecture_dataset_D2_R12_m4_e0.95_k3_euclidean_distance.log",
+        "log_out": "out/LOG_algorithm_lecture_dataset_D2_R12_m4_e2_euclidean_distance.log",
         "n_dimentions": 2,
         "n_rows": 12,
         "name": "lecture_dataset",
         "out_path": "out/algorithm_lecture_dataset.csv",
-        "params": {
-            "epsilon": 0.95,
-            "k": 3,
-            "minPts": 4
-        },
         "params_dbscan": {
             "epsilon": 2,
             "minPts": 4
@@ -78,11 +68,6 @@
         "n_rows": 10,
         "name": "letter_sample",
         "out_path": "out/dbscan_cpp_letter.csv",
-        "params": {
-            "epsilon": 0.95,
-            "k": 3,
-            "minPts": 4
-        },
         "params_dbscan": {
             "epsilon": 2,
             "minPts": 4
