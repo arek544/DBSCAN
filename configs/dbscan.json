@@ -1,7 +1,7 @@
 {
     "cluto-t7-10k_sample": {
         "disable": false,
-        "log_out": "out/LOG_algorithm_cluto-t7-10k_sample_D2_R200_m4_e2_k3_euclidean_distance.log",
+        "log_out": "out/LOG_algorithm_cluto-t7-10k_sample_D2_R200_m4_e2_euclidean_distance.log",
         "n_dimentions": 2,
         "n_rows": 10000,
         "name": "cluto-t7-10k_sample",
@@ -11,11 +11,21 @@
             "k": 3,
             "minPts": 4
         },
+        "params_dbscan": {
+            "epsilon": 2,
+            "minPts": 4
+        },
+        "params_dbscanrn": {
+            "k": 3
+        },
+        "params_dbscanrn_opt": {
+            "k": 3
+        },
         "path": "data/cluto-t7-10k_sample.txt"
     },
     "complex9_sample": {
         "disable": false,
-        "log_out": "out/LOG_algorithm_complex9_sample_D2_R200_m4_e2_k3_euclidean_distance.log",
+        "log_out": "out/LOG_algorithm_complex9_sample_D2_R200_m4_e2_euclidean_distance.log",
         "n_dimentions": 2,
         "n_rows": 10,
         "name": "complex9_sample",
@@ -25,11 +35,21 @@
             "k": 3,
             "minPts": 4
         },
+        "params_dbscan": {
+            "epsilon": 2,
+            "minPts": 4
+        },
+        "params_dbscanrn": {
+            "k": 3
+        },
+        "params_dbscanrn_opt": {
+            "k": 3
+        },
         "path": "data/complex9_sample.txt"
     },
     "lecture_dataset": {
         "disable": false,
-        "log_out": "out/LOG_algorithm_lecture_dataset_D2_R12_m4_e2_k3_euclidean_distance.log",
+        "log_out": "out/LOG_algorithm_lecture_dataset_D2_R12_m4_e2_euclidean_distance.log",
         "n_dimentions": 2,
         "n_rows": 12,
         "name": "lecture_dataset",
@@ -38,6 +58,16 @@
             "epsilon": 2,
             "k": 3,
             "minPts": 4
+        },
+        "params_dbscan": {
+            "epsilon": 2,
+            "minPts": 4
+        },
+        "params_dbscanrn": {
+            "k": 3
+        },
+        "params_dbscanrn_opt": {
+            "k": 3
         },
         "path": "data/lecture_dataset.txt"
     },
@@ -52,6 +82,16 @@
             "epsilon": 2,
             "k": 3,
             "minPts": 4
+        },
+        "params_dbscan": {
+            "epsilon": 2,
+            "minPts": 4
+        },
+        "params_dbscanrn": {
+            "k": 3
+        },
+        "params_dbscanrn_opt": {
+            "k": 3
         },
         "path": "data/letter_sample.txt"
     }
