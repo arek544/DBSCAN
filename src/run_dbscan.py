@@ -49,8 +49,8 @@ for dataset_name in config.keys():
         print("\n")
         
         pd.DataFrame({
-            'x': algorithm.X[:, 0],
-            'y': algorithm.X[:, 1]
+            'x': algorithm.y_pred,
+            'y': algorithm.state
         }).to_csv(f"out/{name}_{dataset_name}.csv", header=None)
         name = get_name(
             algorithm_name="algorithm", 

@@ -11,7 +11,7 @@ f = open(config_path)
 config = json.load(f)
 
 
-for out_path, log_path in zip(glob.glob('out/*.csv'), glob.glob('out/*.log')):
+for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.log')):
     print('\n')
     print(log_path)
     print(out_path)
@@ -23,8 +23,8 @@ for out_path, log_path in zip(glob.glob('out/*.csv'), glob.glob('out/*.log')):
     if len([dataset for dataset in list(config.keys()) if dataset in name]) > 0:
 
         # load out
-        df = pd.read_csv(out_path, header=None)
-        y_pred, state = df[0], df[1]
+        df = pd.read_csv(out_path, header=None, index_col=0)
+        y_pred, state = df[1], df[2]
 
         dataset_name = [dataset for dataset in list(config.keys()) if dataset in name][0]
 
@@ -96,7 +96,7 @@ for out_path, log_path in zip(glob.glob('out/*.csv'), glob.glob('out/*.log')):
             # 'Davies Bouldin': score['davies_bouldin_score']
         }, index=['values']).T
         
-        stat.to_csv(f'./out/STAT_{name}.csv', index=False)
+        stat.to_csv(f'./out/STAT_{name}.csv', index=True)
         
         # DEBUG
         mask1 = logs['operation'] == '|knn_neighbors|'
@@ -157,5 +157,5 @@ for out_path, log_path in zip(glob.glob('out/*.csv'), glob.glob('out/*.log')):
         fig, ax = plt.subplots( nrows=1, ncols=1 )
         ax.scatter(X[:,0], X[:,1], c=y_pred)    
         ax.set_title(name)
-        fig.savefig(f"./img/{name}")
+        fig.savefig(f"./img/{name}.jpeg")
         plt.close(fig)  

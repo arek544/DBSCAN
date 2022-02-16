@@ -7,6 +7,7 @@ from src.datasets import Dataset
 import json
 import math
 from src.metrics import *
+from src.normalization import *
 
 def epsilon_prim(epsilon):
     return math.sqrt(2-2*epsilon) if epsilon < 1 else 0
@@ -90,23 +91,11 @@ def dbscan(X, epsilon, minPts, similarity):
         cluster_id += 1
     logger.info(f'stop log,,,')
     return cluster, state
-
-def setup_logger(name, log_file, level=logging.INFO):
-    """To setup as many loggers as you want"""
-    formatter = logging.Formatter(fmt='%(msecs)06f,%(message)s')
-    handler = logging.FileHandler(log_file)        
-    handler.setFormatter(formatter)
-
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    logger.addHandler(handler)
-
-    return logger
-
 class DBSCAN:
 
     def __init__(self, epsilon, minPts, similarity=euclidean_distance, **kwargs):
         self.epsilon = epsilon_prim(epsilon)
+        # self.epsilon = epsilon
         self.minPts = minPts
         self.distance = similarity
         self.log_output = 'out.log'
@@ -131,6 +120,8 @@ class DBSCAN:
         X, y = dataset.X, dataset.y
         logger.info(f'reading_data,,{(time.time() - timer1)*1000},')
         
+        
+        X = X/np.linalg.norm(X, axis =1, keepdims = True)
         self.X = X
         result = dbscan(self.X, self.epsilon, self.minPts, self.distance)
         self.y_pred, self.state = result
