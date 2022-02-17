@@ -23,8 +23,8 @@ for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.
     if len([dataset for dataset in list(config.keys()) if dataset in name]) > 0:
 
         # load out
-        df = pd.read_csv(out_path, header=None, index_col=0)
-        y_pred, state = df[1], df[2]
+        df = pd.read_csv(out_path, header=None) #, index_col=False)
+        y_pred, state = df[0], df[1]
 
         dataset_name = [dataset for dataset in list(config.keys()) if dataset in name][0]
 

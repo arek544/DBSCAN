@@ -171,7 +171,7 @@ class DBSCANRN:
         pd.DataFrame({
             'cluster': self.y_pred,
             'state': self.state
-        }).to_csv(f"out/{self.name}.csv", header=None)
+        }).to_csv(f"out/{self.name}.csv", header=None, index=False)
         logger.info(f'writing_data,,{(time.time() - timer1)*1000},')
         
         return self.y_pred
