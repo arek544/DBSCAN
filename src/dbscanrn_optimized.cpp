@@ -61,6 +61,14 @@ float cosine_dissimilarity(const xarray<double>& a, const xarray<double>& b){
     return 1 - result(0);
 }
 
+float euclidean_distance(const xarray<double>& a, const xarray<double>& b){ 
+    return (float) sqrt(sum(pow((a - b), 2))(0));
+}
+
+double epsilon_prim(double epsilon){ 
+    return (double) sqrt(2 - 2 * epsilon);
+}
+
 auto normalize(const xarray<double>& a){ 
     xarray<double> result = a / sqrt(sum(pow(a, 2)));
     return result;
@@ -87,7 +95,7 @@ int main() {
         if (not conf["disable"].get<bool>()) {
             std::cout << conf["name"].get<std::string>() << "\n";
             auto path = conf["path"].get<std::string>();
-            auto k = conf["params"]["k"].get<int>();
+            auto k = conf["params_dbscanrn_opt"]["k"].get<int>();
             auto out_path = conf["out_path"].get<std::string>();
             auto log_out = conf["log_out"].get<std::string>();
             
@@ -186,7 +194,7 @@ void clustering_algorithm(const xarray<float>& X_original, int k,  std::ofstream
         };
         
         if (previous_check) {
-            float similarity = cosine_dissimilarity(
+            float similarity = euclidean_distance(
                 new_candidate, all_point_sorted[current_index]
             );
             outfile << std::setprecision (16) << current_time() << ",similarity_calculation," << (int) current_index << ",1," << endl;
@@ -194,7 +202,7 @@ void clustering_algorithm(const xarray<float>& X_original, int k,  std::ofstream
                 candidates = filter(candidates, not_equal(candidate_distance, real_max));
                 candidates = concatenate(xtuple(candidates, xarray<int>{new_candidate}));
                 candidate_distance = concatenate(xtuple(candidate_distance, xarray<double>{similarity}));
-                real_max = amax(candidate_distance)(0);
+                real_max = epsilon_prim(amax(candidate_distance)(0));
                 calc_pessimistic_estimation((int) current_index);
             };
         };
@@ -206,7 +214,7 @@ void clustering_algorithm(const xarray<float>& X_original, int k,  std::ofstream
         auto start =  chrono::high_resolution_clock::now();
         vector<double> r_dist;
         for (auto& idx : all_point_indices) {
-            r_dist.push_back(cosine_dissimilarity(row(X, idx), {0, 1}));
+            r_dist.push_back(euclidean_distance(row(X, idx), {0, 1}));
         };
         auto end = chrono::high_resolution_clock::now();
         duration<double> elapsed = end - start;
@@ -242,10 +250,10 @@ void clustering_algorithm(const xarray<float>& X_original, int k,  std::ofstream
         vector<double> dist;
         for (auto& candidate_idx : candidates) {
             outfile << std::setprecision (16) << current_time() << ",similarity_calculation," << (int) current_index << ",1," << endl;
-            dist.push_back(cosine_dissimilarity(row(X, current_index), row(X, candidate_idx)));
+            dist.push_back(euclidean_distance(row(X, current_index), row(X, candidate_idx)));
         }
         candidate_distance = adapt(dist, {dist.size()});
-        real_max = amax(candidate_distance)(0);
+        real_max = epsilon_prim(amax(candidate_distance)(0));
         
         calc_pessimistic_estimation((int) current_index);
     };  
@@ -256,7 +264,7 @@ void clustering_algorithm(const xarray<float>& X_original, int k,  std::ofstream
             
             // outfile << std::setprecision (16) << current_time() << ",similarity_calculation," << (int) current_index << ",1," << endl;
             
-            neighbor_sim.push_back(cosine_dissimilarity(row(X, neighbor_index), row(X, current_index)));
+            neighbor_sim.push_back(euclidean_distance(row(X, neighbor_index), row(X, current_index)));
         };
         xarray<float> neighbor_similaritys = adapt(neighbor_sim, {neighbor_sim.size()});
         xarray<int> sort_indices = argsort(neighbor_similaritys);
@@ -342,19 +350,19 @@ void clustering_algorithm(const xarray<float>& X_original, int k,  std::ofstream
         search(current_index(0,0));
         cluster_id++;
         outfile << std::setprecision (16) << current_time() << ",knn_neighbors_id," <<
-        current_index << ",,";
+        current_index(0,0) << ",,";
         for(auto& i : point_knn[(int) current_index(0,0)]) {outfile << i << ";"; }
         outfile << endl;
         outfile << std::setprecision (16) << current_time() << ",|knn_neighbors|," <<
-        current_index << "," << (int) point_knn[(int) current_index(0,0)].shape(0) << "," << endl;
+        current_index(0,0) << "," << (int) point_knn[(int) current_index(0,0)].shape(0) << "," << endl;
         
         outfile << std::setprecision (16) << current_time() << ",rnn_neighbors_id," <<
-        current_index << ",,";
+        current_index(0,0) << ",,";
         for(auto& i : point_knn[(int) current_index(0,0)]) {outfile << i << ";"; }
         outfile << endl;
 
         outfile << std::setprecision (16) << current_time() << ",|rnn_neighbors|," <<
-        current_index << "," << (int) point_knn[(int) current_index(0,0)].shape(0) << "," << endl;
+        current_index(0,0) << "," << (int) point_knn[(int) current_index(0,0)].shape(0) << "," << endl;
         
     }
 
