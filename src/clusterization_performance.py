@@ -68,7 +68,7 @@ def evaluate(y_pred, y_true, data):
         return {
             "purity": purity(y_true, y_pred),
             "rand_score": rand_score(y_true, y_pred),
-            # "davies_bouldin_score": davies_bouldin_score_value,
+            "davies_bouldin_score": davies_bouldin_score_value,
             "silhouette_score_euclidean": silhouette_score,
             "silhouette_score_cosine": silhouette_score_cosine ,
             "TP": tp(y_true, y_pred),
