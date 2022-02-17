@@ -60,6 +60,8 @@ for dataset_name in config.keys():
             n_rows=dataset.n_rows,
             **params
         )
+        name.replace(params['similarity'].__name__, "similarity")
+        dataset_name.replace(params['similarity'].__name__, "similarity")
         conf['log_out'] = f'out/LOG_{name}.log'
         conf['out_path'] = f'out/algorithm_{dataset_name}.csv'
                     

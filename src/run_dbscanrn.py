@@ -30,7 +30,7 @@ for dataset_name in config.keys():
         timer_start = time.time()
         
         
-        params = {'similarity': euclidean_distance}
+        params = {'similarity': cosine_dissimilarity}
         params.update(conf['params_dbscanrn'])
         
         algorithm = DBSCANRN(**params)
@@ -53,6 +53,7 @@ for dataset_name in config.keys():
         #     'x': algorithm.X[:, 0],
         #     'y': algorithm.X[:, 1]
         # }).to_csv(f"out/{name}_{dataset_name}.csv", header=None)
+        
         name = get_name(
             algorithm_name="algorithm", 
             dataset_name=conf['name'], 
@@ -60,6 +61,8 @@ for dataset_name in config.keys():
             n_rows=dataset.n_rows,
             **params
         )
+        name.replace(params['similarity'].__name__, "similarity")
+        dataset_name.replace(params['similarity'].__name__, "similarity")
         conf['log_out'] = f'out/LOG_{name}.log'
         conf['out_path'] = f'out/algorithm_{dataset_name}.csv'
                     
