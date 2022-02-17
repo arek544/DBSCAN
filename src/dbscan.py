@@ -120,8 +120,10 @@ class DBSCAN:
         X, y = dataset.X, dataset.y
         logger.info(f'reading_data,,{(time.time() - timer1)*1000},')
         
-        
+        timer1 = time.time() 
         X = X/np.linalg.norm(X, axis =1, keepdims = True)
+        logger.info(f'normalization_time,,{(time.time() - timer1)*1000},')
+        
         self.X = X
         result = dbscan(self.X, self.epsilon, self.minPts, self.distance)
         self.y_pred, self.state = result
@@ -130,7 +132,7 @@ class DBSCAN:
         pd.DataFrame({
             'cluster': self.y_pred,
             'state': self.state
-        }).to_csv(f"out/{self.name}_{dataset_name}.csv", header=None)
+        }).to_csv(f"out/{self.name}.csv", header=None)
         logger.info(f'writing_data,,{(time.time() - timer1)*1000},')
         
         return self.y_pred

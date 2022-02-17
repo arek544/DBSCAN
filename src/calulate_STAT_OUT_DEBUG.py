@@ -12,10 +12,10 @@ config = json.load(f)
 
 
 for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.log')):
-    print('\n')
-    print(log_path)
-    print(out_path)
-    print('\n')
+    # print('\n')
+    # print(log_path)
+    # print(out_path)
+    # print('\n')
     
     name = Path(log_path).stem.replace('LOG_','')
 
@@ -28,7 +28,7 @@ for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.
 
         dataset_name = [dataset for dataset in list(config.keys()) if dataset in name][0]
 
-        dataset = Dataset(f'data/{dataset_name}.txt') 
+        dataset = Dataset(f'data/{dataset_name}.txt', print_info=False) 
         X, y = dataset.X, dataset.y
         
         logs = pd.read_csv(

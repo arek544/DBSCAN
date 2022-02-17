@@ -24,7 +24,7 @@ for dataset_name in config.keys():
     conf = config[dataset_name]
     if not conf['disable']:
 
-        dataset = Dataset(conf['path'])
+        dataset = Dataset(conf['path'], print_info=True)
         #################### Clusterization ###########################
         timer_start = time.time()
         
@@ -48,10 +48,10 @@ for dataset_name in config.keys():
         display_points(algorithm.X, algorithm.y_pred, numerate=False)
         print("\n")
         
-        pd.DataFrame({
-            'x': algorithm.X[:, 0],
-            'y': algorithm.X[:, 1]
-        }).to_csv(f"out/{name}_{dataset_name}.csv", header=None)
+        # pd.DataFrame({
+        #     'x': algorithm.X[:, 0],
+        #     'y': algorithm.X[:, 1]
+        # }).to_csv(f"out/{name}_{dataset_name}.csv", header=None)
         name = get_name(
             algorithm_name="algorithm", 
             dataset_name=conf['name'], 
