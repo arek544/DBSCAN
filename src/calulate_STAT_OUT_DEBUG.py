@@ -10,7 +10,6 @@ config_path = './configs/dbscan.json'
 f = open(config_path)
 config = json.load(f)
 
-
 for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.log')):
     # print('\n')
     # print(log_path)
@@ -41,6 +40,7 @@ for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.
         mask = logs['operation'] == 'similarity_calculation'
         similarity_calculation = logs[mask].groupby('point_id').sum().reset_index()
         similarity_calculation.rename(columns={'value': '# of distance/similarity calculations'}, inplace=True)
+        similarity_calculation = similarity_calculation[['point_id', '# of distance/similarity calculations']].astype(int)
 
         out = pd.DataFrame({
             'point_id': np.arange(dataset.n_rows),
@@ -53,6 +53,11 @@ for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.
         out = out.merge(similarity_calculation, on='point_id')
         out.to_csv(f'./out/OUT_{name}.csv', index=False)
         
+        if name.startswith('dbscanrn_cpp') or name.startswith('dbscanrn_py'):
+            similarity = "cosine dissimilarity"
+        else:
+            similarity = "euclidean distance"
+
         # STAT
         params = config[dataset_name]['params_dbscan']
 
@@ -64,7 +69,7 @@ for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.
             'epsilon': params['epsilon'] if 'epsilon' in params else '',
             'minPts': params['minPts'] if 'minPts' in params else '',
             'k':  params['k'] if 'k' in params else '',
-            # 'similarity': params['similarity'],
+            'similarity': similarity,
             'values of dimensions of a reference point': '[0,1]',
             'reading the input file [ms]': logs.loc[logs['operation'] == 'reading_data', 'value'].values[0],
             'normalization of vectors [ms]': "",
@@ -73,7 +78,7 @@ for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.
                 logs.loc[logs['operation'] == 'stop log', 'time [ms]'].values[0] - 
                 logs.loc[logs['operation'] == 'start log', 'time [ms]'].values[0]
             ),
-            # 'saving results to OUT time [ms]': logs.loc[logs['operation'] == 'writing_data', 'value'].values[0] ,
+            'saving results to OUT time [ms]': logs.loc[logs['operation'] == 'writing_data', 'value'].values[0] ,
             "dist_to_ref_point_time [ms]": logs[logs['operation'] == 'dist_to_ref_point_time']['value'].sum(),
             'total runtime [ms]': (
                 logs.loc[logs['operation'] == 'writing_data', 'time [ms]'].values[0] - 
@@ -93,7 +98,7 @@ for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.
             'RAND': score['rand_score'],
             'Purity': score['purity'],
             'Silhouette coefficient': score['silhouette_score_euclidean'],
-            # 'Davies Bouldin': score['davies_bouldin_score']
+            'Davies Bouldin': score['davies_bouldin_score']
         }, index=['values']).T
         
         stat.to_csv(f'./out/STAT_{name}.csv', index=True)

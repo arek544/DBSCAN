@@ -87,7 +87,7 @@ int main() {
         if (not conf["disable"].get<bool>()) {
             std::cout << conf["name"].get<std::string>() << "\n";
             auto path = conf["path"].get<std::string>();
-            auto k = conf["params"]["k"].get<int>();
+            auto k = conf["params_dbscanrn"]["k"].get<int>();
             auto out_path = conf["out_path"].get<std::string>();
             auto log_out = conf["log_out"].get<std::string>();
             
