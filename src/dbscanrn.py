@@ -162,6 +162,10 @@ class DBSCANRN:
         dataset = Dataset(self.config[dataset_name]['path'], False)
         X, y = dataset.X, dataset.y
         logger.info(f'reading_data,,{(time.time() - timer1)*1000},')
+
+        timer1 = time.time() 
+        X = X/np.linalg.norm(X, axis =1, keepdims = True)
+        logger.info(f'normalization_time,,{(time.time() - timer1)*1000},')
         
         self.X = X
         result = dbscanrn(self.X, self.k, self.similarity)
