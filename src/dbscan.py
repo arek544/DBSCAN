@@ -91,6 +91,7 @@ def dbscan(X, epsilon, minPts, similarity):
         cluster_id += 1
     logger.info(f'stop log,,,')
     return cluster, state
+    
 class DBSCAN:
 
     def __init__(self, epsilon, minPts, similarity=euclidean_distance, **kwargs):
