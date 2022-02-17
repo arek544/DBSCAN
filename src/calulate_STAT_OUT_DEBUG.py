@@ -72,7 +72,7 @@ for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.
             'similarity': similarity,
             'values of dimensions of a reference point': '[0,1]',
             'reading the input file [ms]': logs.loc[logs['operation'] == 'reading_data', 'value'].values[0],
-            'normalization of vectors [ms]': "",
+            'normalization of vectors [ms]': logs.loc[logs['operation'] == 'normalization_time', 'time [ms]'].values[0],
             "Eps-neighborhood timer [ms]": logs.loc[logs['operation'] == 'Eps_time', 'value'].sum(),
             'Clustering timer [ms]': (
                 logs.loc[logs['operation'] == 'stop log', 'time [ms]'].values[0] - 
