@@ -59,7 +59,7 @@ def pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, s
     if not  previous_check:
         return dfx
     if previous_check:
-        logging.info(f'similarity_calculation, {current_index},1,')
+        logger.info(f'similarity_calculation, {current_index},1,')
         dfy['similarity'] = similarity(dfy[['x','y']].values, df[df['index']==current_index][['x','y']].values[0])
         if dfy['similarity'] < real_max:
             dfx = dfx[dfx['similarity'] != real_max]
@@ -78,17 +78,17 @@ def ti_knn(k, df, current_index, similarity, ref_point=[0,1]):
         lambda row: similarity(row[['x','y']], ref_point), 
         axis=1
     ) 
-    logging.info(f'dist_to_ref_point_time,,{(time.time() - timer_start) * 1000},')
+    logger.info(f'dist_to_ref_point_time,,{(time.time() - timer_start) * 1000},')
     
     # calculate pessimistic estimation
     timer_start = time.time()
     current_index_r_distance = df[df['index']==current_index]['r_distnace'].values[0]
     df['pessimistic_estimation'] = abs(current_index_r_distance-df['r_distnace'])
-    logging.info(f'pessimistic_estimation_time,{current_index},{(time.time() - timer_start) * 1000},')
+    logger.info(f'pessimistic_estimation_time,{current_index},{(time.time() - timer_start) * 1000},')
 
     timer_start = time.time()
     df = df.sort_values(by='pessimistic_estimation')
-    logging.info(f'sorting_pessimistic_est_time,{current_index},{(time.time() - timer_start) * 1000},')
+    logger.info(f'sorting_pessimistic_est_time,{current_index},{(time.time() - timer_start) * 1000},')
     
     df.reset_index(inplace=True, drop=True)
 
@@ -103,7 +103,7 @@ def ti_knn(k, df, current_index, similarity, ref_point=[0,1]):
     xy_current_index = df[df['index']==current_index][['x','y']].values[0]
     distances = []
     for row in dfx.iterrows():
-        logging.info(f'similarity_calculation, {current_index},1,')
+        logger.info(f'similarity_calculation, {current_index},1,')
         dist = similarity(
             row[1][['x','y']], 
             xy_current_index
@@ -129,8 +129,8 @@ def get_tiknn(k, df, similarity):
         point_tiknn_result = [int(point) for point in point_tiknn_result]
         point_tiknn[current_index] = point_tiknn_result
         tiknn_indices_str = ';'.join(str(e) for e in point_tiknn_result)
-        logging.info(f'knn_neighbors_id,{current_index},,{tiknn_indices_str}')
-        logging.info(f'|knn_neighbors|,{current_index}, {len(point_tiknn_result)},')  
+        logger.info(f'knn_neighbors_id,{current_index},,{tiknn_indices_str}')
+        logger.info(f'|knn_neighbors|,{current_index}, {len(point_tiknn_result)},')  
     return point_tiknn
 
 
@@ -139,16 +139,16 @@ def get_tirnn(k, df, all_point_indices, similarity):
     
     timer_start = time.time()
     point_tiknn = get_tiknn(k, df, similarity)
-    logging.info(f'tiknn_time,,{(time.time() - timer_start) * 1000},')
+    logger.info(f'tiknn_time,,{(time.time() - timer_start) * 1000},')
     
     timer_start = time.time()
     for current_index in all_point_indices:
         tirnn = get_pointwise_rnn(point_tiknn, current_index)
         point_tirnn[current_index] = tirnn
         tirnn_indices_str = ';'.join(str(e) for e in tirnn)
-        logging.info(f'rnn_neighbors_id,{current_index},,{tirnn_indices_str}')
-        logging.info(f'|rnn_neighbors|,{current_index}, {len(tirnn)},')
-    logging.info(f'rnn_time,{current_index},{(time.time() - timer_start) * 1000},')    
+        logger.info(f'rnn_neighbors_id,{current_index},,{tirnn_indices_str}')
+        logger.info(f'|rnn_neighbors|,{current_index}, {len(tirnn)},')
+    logger.info(f'rnn_time,{current_index},{(time.time() - timer_start) * 1000},')    
     return point_tirnn, point_tiknn
 
 
@@ -184,7 +184,7 @@ def get_knn(current_index, neighbor_indices, k, similarity, X):
 
 
 def ti_dbscanrn(X, k, similarity, ref_point):
-    logging.info(f'start log,,,')
+    logger.info(f'start log,,,')
 
     # inidces of all points
     all_point_indices = list(range(len(X))) 
@@ -209,7 +209,7 @@ def ti_dbscanrn(X, k, similarity, ref_point):
     
     timer_start = time.time()
     point_rnn, point_knn = get_tirnn(k, df, all_point_indices, similarity) # calculate RNN_k for all points
-    logging.info(f'tirnn_time,,{(time.time() - timer_start) * 1000},')
+    logger.info(f'tirnn_time,,{(time.time() - timer_start) * 1000},')
     
     # search for clusters
     def search(current_index, k):
@@ -238,7 +238,7 @@ def ti_dbscanrn(X, k, similarity, ref_point):
         cluster[not_clustered_ids] = cluster[knn[0]]
         state[not_clustered_ids] = CLUSTERED
 
-    logging.info(f'stop log,,,')
+    logger.info(f'stop log,,,')
     return cluster, state
 
 
@@ -284,7 +284,6 @@ class DBSCANRN_opt:
             'state': self.state
         }).to_csv(f"out/{self.name}.csv", header=None, index=False)
         logger.info(f'writing_data,,{(time.time() - timer1)*1000},')
-        
         return self.y_pred
     
     def get_logs(self):
