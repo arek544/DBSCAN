@@ -57,6 +57,15 @@ float euclidean_distance(const xarray<double>& a, const xarray<double>& b){
     return (float) sqrt(sum(pow((a - b), 2))(0));
 }
 
+double epsilon_prim(double epsilon){ 
+    return (double) sqrt(2 - 2 * epsilon);
+}
+
+auto normalize(const xarray<double>& a){ 
+    xarray<double> result = a / sqrt(sum(pow(a, 2)));
+    return result;
+}
+
 xarray<double> CLUSTER; 
 xarray<double> STATE;
     
@@ -78,11 +87,13 @@ int main() {
         if (not conf["disable"].get<bool>()) {
             std::cout << conf["name"].get<std::string>() << "\n";
             auto path = conf["path"].get<std::string>();
-            auto epsilon = conf["params"]["epsilon"].get<double>();
-            auto minPts = conf["params"]["minPts"].get<int>();
+            auto epsilon = conf["params_dbscan"]["epsilon"].get<double>();
+            auto minPts = conf["params_dbscan"]["minPts"].get<int>();
             auto out_path = conf["out_path"].get<std::string>();
             auto log_out = conf["log_out"].get<std::string>();
             
+            epsilon = epsilon_prim(epsilon);
+                
             out_path = regex_replace(out_path, regex("algorithm"), "dbscan_cpp");
             log_out = regex_replace(log_out, regex("algorithm"), "dbscan_cpp");
             
@@ -129,10 +140,19 @@ int main() {
 }
 
 
-void dbscan(const xarray<float>& X, float epsilon, int minPts, std::ofstream& outfile)
+void dbscan(const xarray<float>& X_original, float epsilon, int minPts, std::ofstream& outfile)
 {
     outfile << std::setprecision (16) << current_time() << ",start log,,," << endl;
 
+    // normalization
+    auto start =  chrono::high_resolution_clock::now();
+    xarray<float> X = normalize(X_original);
+    auto end =  chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+
+    outfile << std::setprecision (16) << current_time() << ",normalization_time," <<
+        "," << elapsed.count() << "," << endl;
+    
     // each data point can be in one of 3 stages
     int NOT_VISITED = -1; // not visited point
     int VISITED = 0; // non-core point
