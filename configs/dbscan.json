@@ -1,7 +1,7 @@
 {
     "cluto-t7-10k_sample": {
-        "disable": true,
-        "log_out": "out/LOG_algorithm_cluto-t7-10k_sample_D2_R200_m4_e0.001_euclidean_distance.log",
+        "disable": false,
+        "log_out": "out/LOG_algorithm_cluto-t7-10k_sample_D2_R200_k3_similarity.log",
         "n_dimentions": 2,
         "n_rows": 10000,
         "name": "cluto-t7-10k_sample",
@@ -19,8 +19,8 @@
         "path": "data/cluto-t7-10k_sample.txt"
     },
     "complex9_sample": {
-        "disable": true,
-        "log_out": "out/LOG_algorithm_complex9_sample_D2_R200_m4_e-10000_euclidean_distance.log",
+        "disable": false,
+        "log_out": "out/LOG_algorithm_complex9_sample_D2_R200_k3_similarity.log",
         "n_dimentions": 2,
         "n_rows": 10,
         "name": "complex9_sample",
@@ -44,7 +44,7 @@
     },
     "lecture_dataset": {
         "disable": false,
-        "log_out": "out/LOG_algorithm_lecture_dataset_D2_R12_m4_e0.99_euclidean_distance.log",
+        "log_out": "out/LOG_algorithm_lecture_dataset_D2_R12_k3_similarity.log",
         "n_dimentions": 2,
         "n_rows": 12,
         "name": "lecture_dataset",
@@ -63,7 +63,7 @@
     },
     "letter_sample": {
         "disable": true,
-        "log_out": "out/LOG_dbscan_cpp_letter_D2_R12_m4_e2_euclidean_distance.log",
+        "log_out": "out/LOG_dbscan_cpp_letter_D2_R12_m4_e2_similarity.log",
         "n_dimentions": 2,
         "n_rows": 10,
         "name": "letter_sample",
