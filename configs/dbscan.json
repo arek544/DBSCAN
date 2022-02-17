@@ -1,7 +1,7 @@
 {
     "cluto-t7-10k_sample": {
         "disable": false,
-        "log_out": "out/LOG_algorithm_cluto-t7-10k_sample_D2_R200_k3_similarity.log",
+        "log_out": "out/LOG_algorithm_cluto-t7-10k_sample_D2_R200_k20_similarity.log",
         "n_dimentions": 2,
         "n_rows": 10000,
         "name": "cluto-t7-10k_sample",
@@ -11,16 +11,16 @@
             "minPts": 4
         },
         "params_dbscanrn": {
-            "k": 3
+            "k": 20
         },
         "params_dbscanrn_opt": {
-            "k": 3
+            "k": 20
         },
         "path": "data/cluto-t7-10k_sample.txt"
     },
     "complex9_sample": {
-        "disable": true,
-        "log_out": "out/LOG_algorithm_complex9_sample_D2_R200_m4_e0.99_similarity.log",
+        "disable": false,
+        "log_out": "out/LOG_algorithm_complex9_sample_D2_R200_k50_similarity.log",
         "n_dimentions": 2,
         "n_rows": 10,
         "name": "complex9_sample",
@@ -30,16 +30,16 @@
             "minPts": 4
         },
         "params_dbscanrn": {
-            "k": 3
+            "k": 50
         },
         "params_dbscanrn_opt": {
-            "k": 3
+            "k": 50
         },
         "path": "data/complex9_sample.txt"
     },
     "lecture_dataset": {
-        "disable": true,
-        "log_out": "out/LOG_algorithm_lecture_dataset_D2_R12_k2_similarity.log",
+        "disable": false,
+        "log_out": "out/LOG_algorithm_lecture_dataset_D2_R12_k3_similarity.log",
         "n_dimentions": 2,
         "n_rows": 12,
         "name": "lecture_dataset",
@@ -49,10 +49,10 @@
             "minPts": 2
         },
         "params_dbscanrn": {
-            "k": 2
+            "k": 4
         },
         "params_dbscanrn_opt": {
-            "k": 3
+            "k": 4
         },
         "path": "data/lecture_dataset.txt"
     },
