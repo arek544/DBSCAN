@@ -65,7 +65,7 @@ def pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, s
             dfx = dfx[dfx['similarity'] != real_max]
             dfx = dfx.append(dfy[['index', 'x','y', 'similarity', 'r_distnace']])
             real_max = dfx["similarity"].max()
-            real_max = epsilon_prim(real_max)
+            # real_max = epsilon_prim(real_max)
             return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, similarity)
     return pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, similarity)
 
@@ -113,7 +113,7 @@ def ti_knn(k, df, current_index, similarity, ref_point=[0,1]):
 
     # choosing the largest real similarity  from among the candidates    
     real_max = dfx["similarity"].max()
-    real_max = epsilon_prim(real_max)
+    # real_max = epsilon_prim(real_max)
     
     # looking for better candidates
     dfx = pessimistic_estimation(df, dfx, current_index, real_max, down_row, idx, k, similarity)
