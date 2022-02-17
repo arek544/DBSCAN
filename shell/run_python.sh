@@ -1,3 +1,10 @@
-. shell/run_dbscan_py.sh
-. shell/run_dbscanrn_py.sh
-. shell/run_dbscanrn_opt_py.sh
+echo "DBSCAN"
+python src/run_dbscan.py
+
+echo "DBSCANRN"
+python src/run_dbscanrn.py
+
+echo "DBSCANRN opt"
+python src/run_dbscanrn_opt.py
+
+python src/calulate_STAT_OUT_DEBUG.py
