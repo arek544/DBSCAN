@@ -61,6 +61,7 @@ float cosine_dissimilarity(const xarray<double> &a, const xarray<double> &b)
     return 1 - result(0);
 }
 
+// Segmentation fault issue
 float euclidean_distance(const xarray<double> &a, const xarray<double> &b)
 {
     return (float)sqrt(sum(pow((a - b), 2))(0));
@@ -158,7 +159,8 @@ void clustering_algorithm(const xarray<float> &X_original, int k, std::ofstream 
 
     // normalization
     auto start = chrono::high_resolution_clock::now();
-    xarray<float> X = normalize(X_original);
+    // xarray<float> X = normalize(X_original); // Segmentation fault issue
+    xarray<float> X = X_original;
     auto end = chrono::high_resolution_clock::now();
     duration<double> elapsed = (end - start);
 
@@ -201,7 +203,7 @@ void clustering_algorithm(const xarray<float> &X_original, int k, std::ofstream 
 
         if (previous_check)
         {
-            float similarity = euclidean_distance(
+            float similarity = cosine_dissimilarity(
                 new_candidate, all_point_sorted[current_index]);
             outfile << std::setprecision(16) << current_time() << ",similarity_calculation," << (int)current_index << ",1," << endl;
             if (similarity < real_max)
@@ -209,7 +211,7 @@ void clustering_algorithm(const xarray<float> &X_original, int k, std::ofstream 
                 candidates = filter(candidates, not_equal(candidate_distance, real_max));
                 candidates = concatenate(xtuple(candidates, xarray<int>{new_candidate}));
                 candidate_distance = concatenate(xtuple(candidate_distance, xarray<double>{similarity}));
-                real_max = epsilon_prim(amax(candidate_distance)(0));
+                real_max = amax(candidate_distance)(0);
                 calc_pessimistic_estimation((int)current_index);
             };
         };
@@ -222,7 +224,7 @@ void clustering_algorithm(const xarray<float> &X_original, int k, std::ofstream 
         vector<double> r_dist;
         for (auto &idx : all_point_indices)
         {
-            r_dist.push_back(euclidean_distance(row(X, idx), {0, 1}));
+            r_dist.push_back(cosine_dissimilarity(row(X, idx), {0, 1}));
         };
         auto end = chrono::high_resolution_clock::now();
         duration<double> elapsed = end - start;
@@ -256,10 +258,10 @@ void clustering_algorithm(const xarray<float> &X_original, int k, std::ofstream 
         for (auto &candidate_idx : candidates)
         {
             outfile << std::setprecision(16) << current_time() << ",similarity_calculation," << (int)current_index << ",1," << endl;
-            dist.push_back(euclidean_distance(row(X, current_index), row(X, candidate_idx)));
+            dist.push_back(cosine_dissimilarity(row(X, current_index), row(X, candidate_idx)));
         }
         candidate_distance = adapt(dist, {dist.size()});
-        real_max = epsilon_prim(amax(candidate_distance)(0));
+        real_max = amax(candidate_distance)(0);
 
         calc_pessimistic_estimation((int)current_index);
     };
@@ -272,7 +274,7 @@ void clustering_algorithm(const xarray<float> &X_original, int k, std::ofstream 
 
             // outfile << std::setprecision (16) << current_time() << ",similarity_calculation," << (int) current_index << ",1," << endl;
 
-            neighbor_sim.push_back(euclidean_distance(row(X, neighbor_index), row(X, current_index)));
+            neighbor_sim.push_back(cosine_dissimilarity(row(X, neighbor_index), row(X, current_index)));
         };
         xarray<float> neighbor_similaritys = adapt(neighbor_sim, {neighbor_sim.size()});
         xarray<int> sort_indices = argsort(neighbor_similaritys);
