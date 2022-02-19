@@ -19,7 +19,7 @@
         "path": "data/cluto-t7-10k_sample.txt"
     },
     "complex9_sample": {
-        "disable": true,
+        "disable": false,
         "log_out": "out/LOG_algorithm_complex9_sample_D2_R200_k3_similarity.log",
         "n_dimentions": 2,
         "n_rows": 10,
@@ -38,7 +38,7 @@
         "path": "data/complex9_sample.txt"
     },
     "lecture_dataset": {
-        "disable": true,
+        "disable": false,
         "log_out": "out/LOG_algorithm_lecture_dataset_D2_R12_k3_similarity.log",
         "n_dimentions": 2,
         "n_rows": 12,
