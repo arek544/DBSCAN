@@ -98,6 +98,9 @@ int main()
             log_out = regex_replace(log_out, regex("algorithm"), "dbscanrn_cpp");
             log_out = regex_replace(log_out, regex("similarity"), "cosine_dissimilarity");
 
+            std::cout << out_path << "\n";
+            std::cout << log_out << "\n";
+
             // load data
             ofstream outfile;
             outfile.open(log_out);

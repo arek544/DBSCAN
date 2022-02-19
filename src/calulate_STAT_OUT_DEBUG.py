@@ -11,13 +11,13 @@ f = open(config_path)
 config = json.load(f)
 
 for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.log')):
-    # print('\n')
-    # print(log_path)
-    # print(out_path)
-    # print('\n')
+    print('\n')
+    print(log_path)
+    print(out_path)
     
     name = Path(log_path).stem.replace('LOG_','')
 
+    # try:
     # lad dataset
     if len([dataset for dataset in list(config.keys()) if dataset in name]) > 0:
 
@@ -30,6 +30,14 @@ for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.
         dataset = Dataset(f'data/{dataset_name}.txt', print_info=False) 
         X, y = dataset.X, dataset.y
         
+        # Plots
+        fig, ax = plt.subplots( nrows=1, ncols=1 )
+        ax.scatter(X[:,0], X[:,1], c=y_pred)    
+        ax.set_title(name)
+        fig.savefig(f"./img/{name}.jpeg")
+        print(f"./img/{name}.jpeg")
+        plt.close(fig)  
+
         logs = pd.read_csv(
             f'out/LOG_{name}.log',
             names=['time [ms]', 'operation', 'point_id', 'value', 'string'],
@@ -158,9 +166,5 @@ for out_path, log_path in zip(glob.glob('out/dbscan*.csv'), glob.glob('out/LOG*.
         debug = debug1.merge(debug2, on='point_id').merge(debug3, on='point_id').merge(debug4, on='point_id')
         debug.to_csv(f'./out/DEBUG_{name}.csv', index=False)
 
-        # Plots
-        fig, ax = plt.subplots( nrows=1, ncols=1 )
-        ax.scatter(X[:,0], X[:,1], c=y_pred)    
-        ax.set_title(name)
-        fig.savefig(f"./img/{name}.jpeg")
-        plt.close(fig)  
+    # except Exception:
+    #     pass
