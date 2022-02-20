@@ -1,0 +1,31 @@
+,values
+name of the input fil,cluto-t7-10k_sample
+# of dimensions of a point,2
+# of points in the input file,200
+epsilon,0.999
+minPts,4
+k,
+similarity,euclidean distance
+values of dimensions of a reference point,"[0,1]"
+reading the input file [ms],0.0062172
+normalization of vectors [ms],1645269556.906057
+Eps-neighborhood timer [ms],15.834075499999997
+Clustering timer [ms],16.14890694618225
+saving results to OUT time [ms],0.0801301
+dist_to_ref_point_time [ms],0.0
+total runtime [ms],16.234913110733032
+sorting_dist_time [ms],0.0
+tiknn_time [ms],0.0
+tirnn_time [ms],0.0
+# of discovered clusters,200
+# of discovered noise points,0
+# of discovered core points,200
+# of discovered border points,0
+avg # of calculations of distance/similarity,200.0
+|TP|,
+|TN|,
+# of pairs of points,200
+RAND,
+Purity,
+Silhouette coefficient,
+Davies Bouldin,

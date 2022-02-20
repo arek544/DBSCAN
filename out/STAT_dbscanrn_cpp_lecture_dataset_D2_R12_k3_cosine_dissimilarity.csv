@@ -1,0 +1,31 @@
+,values
+name of the input fil,lecture_dataset
+# of dimensions of a point,2
+# of points in the input file,12
+epsilon,0.95
+minPts,2
+k,
+similarity,cosine dissimilarity
+values of dimensions of a reference point,"[0,1]"
+reading the input file [ms],0.0052866
+normalization of vectors [ms],1645269524.907995
+Eps-neighborhood timer [ms],0.0
+Clustering timer [ms],0.09231710433959961
+saving results to OUT time [ms],0.009731
+dist_to_ref_point_time [ms],0.0
+total runtime [ms],0.10338115692138672
+sorting_dist_time [ms],0.0
+tiknn_time [ms],0.06869
+tirnn_time [ms],0.0209334
+# of discovered clusters,12
+# of discovered noise points,0
+# of discovered core points,12
+# of discovered border points,0
+avg # of calculations of distance/similarity,11.0
+|TP|,2
+|TN|,10
+# of pairs of points,12
+RAND,0.18181818181818182
+Purity,0.8333333333333334
+Silhouette coefficient,0.5084760059046316
+Davies Bouldin,0.758942365254691
